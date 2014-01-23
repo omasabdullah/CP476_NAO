@@ -12,11 +12,9 @@ public class SpeechHandler
 	// [roomid, speech_id, delay, text, gestures]
 	private Vector<String[]> speechArray = new Vector<String[]>();
 	private int m_uiSpeechStep;
-	private int m_uiTimer;
-	
 	Timer m_Timer = new Timer();
-	
-	
+	int interval;
+	boolean m_bIsSpeaking;
 	
 	//Nao Variables
 	private static String NAOQI_IP = "nao.local";
@@ -26,35 +24,55 @@ public class SpeechHandler
 	{
 		this.speechArray = receivedInput;
 		m_uiSpeechStep = 0;
-		m_uiTimer = 0;
+		m_bIsSpeaking = false;
 	}
 	
-	private void scheduleTimer(int seconds)
-	{
-		long delay = seconds * 1000;
-		m_Timer.schedule(new TimerTask() {
-			public void run()
-			{
-			}
-		}, delay);
-	}
-	
+	// Call after loading string[] vector to initiate speech
 	public void startSpeech()
 	{
-		while (m_uiSpeechStep != speechArray.size())
+		while (m_uiSpeechStep <= speechArray.size() && !m_bIsSpeaking)
 		{
-			
+			ExecuteSpeech();
 		}
 	}
 	
-	public void say(String sayText)
+	private void ExecuteSpeech()
 	{
+		m_bIsSpeaking = true;
+		String sayText = speechArray.get(m_uiSpeechStep)[3];
+		interval = Integer.parseInt(speechArray.get(m_uiSpeechStep)[2]);
+		
 		ALTextToSpeechProxy tts = new ALTextToSpeechProxy(NAOQI_IP, NAOQI_PORT);
 		tts.say(sayText);
+
+		m_Timer.scheduleAtFixedRate(new TimerTask()
+		{
+			public void run()
+			{
+				System.out.println(setInterval());
+			}
+		}, 0, 1000);
 	}
 	
+	// Counter timer
+	private int setInterval()
+	{
+		if (interval <= 1)
+		{
+			m_uiSpeechStep++;
+			m_bIsSpeaking = false;
+			
+			m_Timer.cancel();
+		}
+		return --interval;
+	}
+	
+	// Manual override to skip speech
 	public void stopSpeech()
 	{
 		m_uiSpeechStep = speechArray.size();
-	}	
+	}
+	
+	// Check for completion of Speech Array
+	public boolean isCompletedSpeech() {return (m_uiSpeechStep == speechArray.size()+1);}
 }
