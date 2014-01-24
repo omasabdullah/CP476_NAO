@@ -30,6 +30,8 @@ public class SpeechHandler
 	// Call after loading string[] vector to initiate speech
 	public void startSpeech()
 	{
+		m_bIsSpeaking = true;
+
 		while (m_uiSpeechStep <= speechArray.size() && !m_bIsSpeaking)
 		{
 			ExecuteSpeech();
@@ -38,7 +40,6 @@ public class SpeechHandler
 	
 	private void ExecuteSpeech()
 	{
-		m_bIsSpeaking = true;
 		String sayText = speechArray.get(m_uiSpeechStep)[3];
 		interval = Integer.parseInt(speechArray.get(m_uiSpeechStep)[2]);
 		

@@ -19,8 +19,6 @@ public class ShowImage extends Frame {
 	}
 
 	private BufferedImage img;
-	private static String NAOQI_IP = "nao.local";
-	private static int NAOQI_PORT = 9559;
 
 	public ShowImage(byte[] buff) {
 		super("Image Frame");
@@ -60,21 +58,4 @@ public class ShowImage extends Frame {
 			System.out.println("null image");
 		}
 	}
-
-	public static void main(String[] args) {
-		ALVideoDeviceProxy videoDevice = new ALVideoDeviceProxy(NAOQI_IP, NAOQI_PORT);
-
-		videoDevice.subscribe("java", 1, 11, 250);
-		Variant ret = videoDevice.getImageRemote("java");
-		videoDevice.unsubscribe("java");
-
-		// Video device documentation explain that image is element 6
-		Variant imageV = ret.getElement(6);
-
-		// display image from byte array
-		byte[] binaryImage = imageV.toBinary();
-
-		new ShowImage(binaryImage);
-	}
-
 }

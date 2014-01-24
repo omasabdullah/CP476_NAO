@@ -2,6 +2,9 @@ package wlu.cp476;
 
 import com.aldebaran.proxy.*;
 
+import java.sql.*;
+import java.util.Vector;
+
 public class NaoHandler
 {
 	static final int IDLE 			= 0;
@@ -16,6 +19,7 @@ public class NaoHandler
 	private int m_uiState;
 	private boolean m_bSimulationRunning;
 	private boolean m_bIsSpeaking;
+	private Vector<String[]> m_vSpeechArray = new Vector<String[]>();
 	
 	NaoHandler()
 	{
@@ -33,6 +37,60 @@ public class NaoHandler
 		m_bSimulationRunning = false;
 	}
 	
+	public void DBConnect(int RoomNumber)
+	{
+		String url = "jdbc:mysql://hopper.wlu.ca:3306/";
+        String dbName = "naodb";
+        String driver = "com.mysql.jdbc.Driver";
+        String userName = "abdu0250";
+        String password = "pre7awac";
+        
+        try
+        {
+            Class.forName(driver).newInstance();
+            Connection conn = DriverManager.getConnection(url+dbName,userName,password);
+            Statement st = conn.createStatement();
+            ResultSet res = st.executeQuery("SELECT * FROM  waypoints WHERE room_id = " + RoomNumber);
+            
+            while (res.next())
+            {
+            	int RoomID = res.getInt("room_id");
+            	int Speech_ID = res.getInt("speech_id");
+            	int Delay = res.getInt("delay");
+            	String Text = res.getString("text");
+            	System.out.println("RoomID: " + RoomID);
+            	System.out.println("Speech_ID: " + Speech_ID);
+            	System.out.println("Delay: " + Delay);
+            	System.out.println("Text: " + Text);
+            	System.out.println();
+            	
+            	String[] newEntry = new String[4];
+            	
+            	newEntry[0] = Integer.toString(RoomID);
+            	newEntry[0] = Integer.toString(Speech_ID);
+            	newEntry[0] = Integer.toString(Delay);
+            	newEntry[0] = Text;
+            	
+            	m_vSpeechArray.add(newEntry);
+            	
+            	System.out.println("Successfully fetched " + Integer.toString(m_vSpeechArray.size()) + " entries to waypoint");
+            }
+            
+            conn.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+    	}
+	}
+	
+	public void ForceStartSpeech()
+	{
+		SpeechHandler testSpeech = new SpeechHandler(m_vSpeechArray);
+		testSpeech.startSpeech();
+		
+	}
+	
 	public void startSimulation()
 	{
 		//Initialize simulation
@@ -48,14 +106,22 @@ public class NaoHandler
 				}break;
 				case WAIT_IMAGE:
 				{
+					//Image Recognition Here
+					m_uiState++;
 				}break;
 				case WAIT_DATABASE:
 				{
+					//Cross reference image of faceplate with database
+					
+					m_uiState++;
 				}break;
 				case WAIT_SPEAKING:
 				{
+					//Start Speech Handler here
 					if (m_bIsSpeaking)
 						return;
+					
+					m_uiState = WAIT_IMAGE;
 				}break;
 				case ACTION_SPEAK:
 				{

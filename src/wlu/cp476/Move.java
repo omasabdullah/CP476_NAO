@@ -9,7 +9,7 @@ package wlu.cp476;
 import com.aldebaran.proxy.*;
 
 public class Move {
-	private static String NAOQI_IP = "nao.local";
+	private static String NAOQI_IP = "192.168.1.118";
 	private static int NAOQI_PORT = 9559;
 
 	public static void main(String[] args) {
