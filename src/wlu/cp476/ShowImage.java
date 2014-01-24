@@ -15,6 +15,7 @@ import com.aldebaran.proxy.*;
 public class ShowImage extends Frame {
 
 	static {
+	//Testing
 		System.loadLibrary("jnaoqi");
 	}
 
