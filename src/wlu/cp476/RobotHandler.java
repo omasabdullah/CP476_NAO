@@ -1,7 +1,5 @@
 package wlu.cp476;
 
-import com.aldebaran.proxy.*;
-
 import java.sql.*;
 import java.util.Vector;
 

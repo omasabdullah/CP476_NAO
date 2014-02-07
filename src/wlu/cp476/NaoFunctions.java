@@ -97,6 +97,7 @@ public class NaoFunctions
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	int Say(String text)
 	{
 		ALTextToSpeechProxy tts = new ALTextToSpeechProxy(NAOQI_IP, NAOQI_PORT);

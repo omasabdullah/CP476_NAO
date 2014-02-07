@@ -9,8 +9,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-import com.aldebaran.proxy.*;
-
 @SuppressWarnings("serial")
 public class ShowImage extends Frame {
 
