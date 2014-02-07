@@ -10,16 +10,19 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 @SuppressWarnings("serial")
-public class ShowImage extends Frame {
+public class ShowImage extends Frame
+{
 
-	static {
-	//Testing
+	static
+	{
+		//Testing
 		System.loadLibrary("jnaoqi");
 	}
 
 	private BufferedImage img;
 
-	public ShowImage(byte[] buff) {
+	public ShowImage(byte[] buff)
+	{
 		super("Image Frame");
 		MediaTracker mt = new MediaTracker(this);
 		int[] intArray;
@@ -38,22 +41,28 @@ public class ShowImage extends Frame {
 		mt.addImage(img,0);
 		setSize(320,240);
 		setVisible(true);
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent we) {
+		addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent we)
+			{
 				dispose();
 			}
 		});
 	}
 
-	public void update(Graphics g) {
+	public void update(Graphics g)
+	{
 		paint(g);
 	}
 
-	public void paint(Graphics g) {
-		if (img != null) {
+	public void paint(Graphics g)
+	{
+		if (img != null)
+		{
 			g.drawImage(img, 0, 0, this);
 		}
-		else {
+		else
+		{
 			System.out.println("null image");
 		}
 	}

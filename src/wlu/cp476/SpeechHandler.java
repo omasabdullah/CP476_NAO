@@ -32,7 +32,7 @@ public class SpeechHandler
 			System.out.println(speechArray.get(m_uiSpeechStep)[3]);
 			System.out.println("Setting delay to: " + delay + " seconds");
 			System.out.println();
-			TimeUnit.SECONDS.sleep(delay);
+			TimeUnit.MILLISECONDS.sleep(delay);
 			m_uiSpeechStep++;
 		}
 		
