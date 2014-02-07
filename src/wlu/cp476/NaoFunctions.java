@@ -13,6 +13,12 @@ public class NaoFunctions
 {
 	private static String NAOQI_IP = "192.168.1.122";
 	private static int NAOQI_PORT = 9559;
+	
+	static final int RESULT_OK = 0;
+	static final int RESULT_FAILED = 1;
+	
+	int result;
+	
 
 	// This is required so that we can use the 'Variant' object
 	static
@@ -21,9 +27,10 @@ public class NaoFunctions
 	}
 	
 	@SuppressWarnings("unused")
-	void Move(float x, float y, float z)
+	int MoveTo(float x, float y, float z)
 	{
 		ALMotionProxy motion = new ALMotionProxy(NAOQI_IP, NAOQI_PORT);
+		result = RESULT_FAILED;
 		
 		if (motion == null)	System.out.println("Error Motion Proxy not found");
 		else
@@ -33,13 +40,17 @@ public class NaoFunctions
 			motion.moveInit();
 			motion.moveTo(x, y, z);
 			motion.rest();
+			result = RESULT_OK;
 		}
+		
+		return result;
 	}
 	
 	@SuppressWarnings("unused")
-	void HeadTurn()
+	int HeadTurn(float x, float y, float z)
 	{
 		ALMotionProxy motion = new ALMotionProxy(NAOQI_IP, NAOQI_PORT);
+		result = RESULT_FAILED;
 		
 		if (motion == null)	System.out.println("Error: Motion Proxy not found");
 		else
@@ -52,7 +63,10 @@ public class NaoFunctions
 			motion.setStiffnesses(new Variant(new String[] {"HeadYaw"}), new Variant(new float[] {1.0f}));
 			motion.angleInterpolation(names, angles, times, true);
 			motion.setStiffnesses(new Variant(new String[] {"HeadYaw"}), new Variant(new float[] {0.0f}));
+			result = RESULT_OK;
 		}
+		
+		return result;
 	}
 	
 	@SuppressWarnings("unused")
@@ -79,9 +93,10 @@ public class NaoFunctions
 	}
 	
 	@SuppressWarnings("unused")
-	void StoreToMemory(String dataName, int data)
+	int StoreToMemory(String dataName, int data)
 	{
 		ALMemoryProxy memory = new ALMemoryProxy(NAOQI_IP, NAOQI_PORT);
+		result = RESULT_FAILED;
 		
 		if (memory == null) System.out.println("Error: Memory Proxy not found");
 		else
@@ -89,7 +104,10 @@ public class NaoFunctions
 			memory.insertData(dataName, data);
 			Variant res = memory.getData("answer");
 			System.out.format("The answer is %d\n", res.toInt());
+			result = RESULT_OK;
 		}
+		
+		return result;
 	}
 	
 	@SuppressWarnings("unused")
