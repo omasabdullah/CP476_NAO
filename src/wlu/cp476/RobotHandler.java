@@ -5,7 +5,7 @@ import com.aldebaran.proxy.*;
 import java.sql.*;
 import java.util.Vector;
 
-public class NaoHandler
+public class RobotHandler
 {
 	static final int IDLE 			= 0;
 	static final int WAIT_IMAGE 	= 1;
@@ -21,7 +21,7 @@ public class NaoHandler
 	private boolean m_bIsSpeaking;
 	private Vector<String[]> m_vSpeechArray = new Vector<String[]>();
 	
-	NaoHandler()
+	RobotHandler()
 	{
 		this.m_uiState = IDLE;
 		this.m_bSimulationRunning = false;
@@ -58,22 +58,21 @@ public class NaoHandler
             	int Speech_ID = res.getInt("speech_id");
             	int Delay = res.getInt("delay");
             	String Text = res.getString("text");
+            	
+            	String[] newEntry = new String[4];
+            	newEntry[0] = Integer.toString(RoomID);
+            	newEntry[1] = Integer.toString(Speech_ID);
+            	newEntry[2] = Integer.toString(Delay);
+            	newEntry[3] = Text;
+            	
             	System.out.println("RoomID: " + RoomID);
             	System.out.println("Speech_ID: " + Speech_ID);
             	System.out.println("Delay: " + Delay);
             	System.out.println("Text: " + Text);
-            	System.out.println();
-            	
-            	String[] newEntry = new String[4];
-            	
-            	newEntry[0] = Integer.toString(RoomID);
-            	newEntry[0] = Integer.toString(Speech_ID);
-            	newEntry[0] = Integer.toString(Delay);
-            	newEntry[0] = Text;
-            	
             	m_vSpeechArray.add(newEntry);
             	
             	System.out.println("Successfully fetched " + Integer.toString(m_vSpeechArray.size()) + " entries to waypoint");
+            	System.out.println();
             }
             
             conn.close();
@@ -84,11 +83,11 @@ public class NaoHandler
     	}
 	}
 	
-	public void ForceStartSpeech()
+	public void ForceStartSpeech() throws InterruptedException
 	{
+		System.out.println("FORCE START SPEECH");
 		SpeechHandler testSpeech = new SpeechHandler(m_vSpeechArray);
 		testSpeech.startSpeech();
-		
 	}
 	
 	public void startSimulation()

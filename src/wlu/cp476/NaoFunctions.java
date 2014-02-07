@@ -11,14 +11,19 @@ import com.aldebaran.proxy.Variant;
 
 public class NaoFunctions
 {
-	private static String NAOQI_IP = "192.168.1.122";
-	private static int NAOQI_PORT = 9559;
+	private String NAOQI_IP = "nao.local";
+	private int NAOQI_PORT = 9559;
 	
 	static final int RESULT_OK = 0;
 	static final int RESULT_FAILED = 1;
 	
 	int result;
 	
+	NaoFunctions(String ipAddress, int port)
+	{
+		this.NAOQI_IP = ipAddress;
+		this.NAOQI_PORT = port;
+	}
 
 	// This is required so that we can use the 'Variant' object
 	static
@@ -90,6 +95,21 @@ public class NaoFunctions
 	    		tts.say(inputLine);
 	    	}
 		}
+	}
+	
+	int Say(String text)
+	{
+		ALTextToSpeechProxy tts = new ALTextToSpeechProxy(NAOQI_IP, NAOQI_PORT);
+		result = RESULT_FAILED;
+		
+		if (tts == null) System.out.println("Error: Talk Proxy not found");
+		else
+		{
+	    	tts.say(text);
+	    	result = RESULT_OK;
+		}
+		
+		return result;
 	}
 	
 	@SuppressWarnings("unused")

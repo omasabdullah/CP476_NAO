@@ -2,8 +2,10 @@ package wlu.cp476;
 
 public class MainHandler
 {
-	public static void main(String[] args)
+	public static void main(String[] args) throws InterruptedException
 	{
-		NaoHandler NaoH = new NaoHandler();
+		RobotHandler NaoH = new RobotHandler();
+		NaoH.DBConnect(2085);
+		NaoH.ForceStartSpeech();
 	}
 }
