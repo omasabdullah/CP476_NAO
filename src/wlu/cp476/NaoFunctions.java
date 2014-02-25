@@ -81,13 +81,13 @@ public class NaoFunctions
 		
 		if (tts == null) System.out.println("Error: Talk Proxy not found");
 		else
-		{
+		{	
 			// Scan in input from user
 	    	@SuppressWarnings("resource")
 			Scanner scanner = new Scanner(System.in);
 	    	String inputLine = null;
 	    	
-	    	tts.say("Hello, remoting to live speech mode. Enter what you would like me to say.");
+	    	tts.say("Hello. Speech Mode Activated. Enter what you would like me to say.");
 	    	System.out.println("Input speech: ");
 	    	//Append each line to a vector, press enter (carriage return) once all lines entered
 	    	while (!(inputLine = scanner.nextLine()).equals(""))
