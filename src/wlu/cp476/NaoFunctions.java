@@ -3,11 +3,7 @@ package wlu.cp476;
 import java.awt.image.BufferedImage;
 import java.util.Scanner;
 
-import com.aldebaran.proxy.ALMemoryProxy;
-import com.aldebaran.proxy.ALMotionProxy;
-import com.aldebaran.proxy.ALTextToSpeechProxy;
-import com.aldebaran.proxy.ALVideoDeviceProxy;
-import com.aldebaran.proxy.Variant;
+import com.aldebaran.proxy.*;
 
 public class NaoFunctions
 {
@@ -75,7 +71,46 @@ public class NaoFunctions
 	}
 	
 	@SuppressWarnings("unused")
-	void OverrideSpeech()
+	void ManualMovementOverride()
+	{
+		ALMotionProxy motion = new ALMotionProxy(NAOQI_IP, NAOQI_PORT);
+		ALTextToSpeechProxy tts = new ALTextToSpeechProxy(NAOQI_IP, NAOQI_PORT);
+		
+		if (motion == null)	System.out.println("Error Motion Proxy not found");
+		else
+		{
+			@SuppressWarnings("resource")
+			Scanner scanner = new Scanner(System.in);
+	    	String inputLine = null;
+	    	float 	x = 0.0f,
+	    			y = 0.0f,
+	    			z = 0.0f;
+	    	
+	    	if (tts != null)
+	    		tts.say("Hello. Manual Movement Mode Activated. Enter coordinates");
+	    	
+	    	motion.wakeUp();
+	    	
+	    	//Append each line to a vector, press enter (carriage return) once all lines entered
+	    	while (!(inputLine = scanner.nextLine()).equals(""))
+	    	{
+	    		// This command will 
+	    		String[] inputParse = inputLine.split(" ");
+	    		x = Float.parseFloat(inputParse[0]);
+	    		y = Float.parseFloat(inputParse[1]);
+	    		z = Float.parseFloat(inputParse[2]);
+	    		
+	    		//MOVEMENT
+				motion.moveInit();
+				motion.moveTo(x, y, z);
+	    	}
+	    	
+	    	motion.rest();
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	void ManualSpeechOverride()
 	{
 		ALTextToSpeechProxy tts = new ALTextToSpeechProxy(NAOQI_IP, NAOQI_PORT);
 		
@@ -167,8 +202,8 @@ public class NaoFunctions
 
 			// 	display image from byte array
 			byte[] binaryImage = imageV.toBinary();
-
-			ShowImage myView = new ShowImage(binaryImage);
+			
+			//ShowImage myView = new ShowImage(binaryImage);
 		}
 	}
 }

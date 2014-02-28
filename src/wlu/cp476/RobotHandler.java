@@ -170,7 +170,7 @@ public class RobotHandler
 		m_uiSpeechStep = 0;
 	}
 	// Manual override to control speech
-	public void overrideSpeech() {myNao.OverrideSpeech();}
+	public void overrideSpeech() {myNao.ManualSpeechOverride();}
 	// Manual override to skip speech
 	public void stopSpeech() {m_uiSpeechStep = m_vSpeechArray.size();}
 	// Check for completion of Speech Array
@@ -179,6 +179,8 @@ public class RobotHandler
 	/*
 	 * MOVEMENT ROBOT FUNCTIONS
 	 */
+	
+	public void overrideMovement() {myNao.ManualMovementOverride();}
 	
 	
 }
