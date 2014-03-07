@@ -4,7 +4,7 @@ public class MainHandler
 {
 	public static void main(String[] args) throws InterruptedException
 	{
-		RobotHandler NaoH = new RobotHandler(RobotEnum.RobotType.TYPE_NAO);
+		RobotHandler NaoH = new RobotHandler();
 		NaoH.overrideMovement();
 		//NaoH.overrideSpeech();
 		//NaoH.DBConnect(2085);

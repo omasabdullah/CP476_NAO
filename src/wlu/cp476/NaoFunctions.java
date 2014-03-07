@@ -27,10 +27,8 @@ public class NaoFunctions
 		System.loadLibrary("jnaoqi");
 	}
 	
-	@SuppressWarnings("unused")
-	int MoveTo(float x, float y, float z)
+	int MoveTo(ALMotionProxy motion, float x, float y, float z)
 	{
-		ALMotionProxy motion = new ALMotionProxy(NAOQI_IP, NAOQI_PORT);
 		result = RESULT_FAILED;
 		
 		if (motion == null)	System.out.println("Error Motion Proxy not found");
@@ -47,10 +45,8 @@ public class NaoFunctions
 		return result;
 	}
 	
-	@SuppressWarnings("unused")
-	int HeadTurn(float x, float y, float z)
+	int HeadTurn(ALMotionProxy motion, float x, float y, float z)
 	{
-		ALMotionProxy motion = new ALMotionProxy(NAOQI_IP, NAOQI_PORT);
 		result = RESULT_FAILED;
 		
 		if (motion == null)	System.out.println("Error: Motion Proxy not found");
@@ -70,12 +66,8 @@ public class NaoFunctions
 		return result;
 	}
 	
-	@SuppressWarnings("unused")
-	void ManualMovementOverride()
+	void ManualMovementOverride(ALMotionProxy motion, ALTextToSpeechProxy tts)
 	{
-		ALMotionProxy motion = new ALMotionProxy(NAOQI_IP, NAOQI_PORT);
-		ALTextToSpeechProxy tts = new ALTextToSpeechProxy(NAOQI_IP, NAOQI_PORT);
-		
 		if (motion == null)	System.out.println("Error Motion Proxy not found");
 		else
 		{
@@ -109,11 +101,8 @@ public class NaoFunctions
 		}
 	}
 	
-	@SuppressWarnings("unused")
-	void ManualSpeechOverride()
+	void ManualSpeechOverride(ALTextToSpeechProxy tts)
 	{
-		ALTextToSpeechProxy tts = new ALTextToSpeechProxy(NAOQI_IP, NAOQI_PORT);
-		
 		if (tts == null) System.out.println("Error: Talk Proxy not found");
 		else
 		{	
@@ -132,10 +121,8 @@ public class NaoFunctions
 		}
 	}
 	
-	@SuppressWarnings("unused")
-	int Say(String text)
+	int Say(ALTextToSpeechProxy tts, String text)
 	{
-		ALTextToSpeechProxy tts = new ALTextToSpeechProxy(NAOQI_IP, NAOQI_PORT);
 		result = RESULT_FAILED;
 		
 		if (tts == null) System.out.println("Error: Talk Proxy not found");
@@ -148,10 +135,8 @@ public class NaoFunctions
 		return result;
 	}
 	
-	@SuppressWarnings("unused")
-	int StoreToMemory(String dataName, int data)
+	int StoreToMemory(ALMemoryProxy memory, String dataName, int data)
 	{
-		ALMemoryProxy memory = new ALMemoryProxy(NAOQI_IP, NAOQI_PORT);
 		result = RESULT_FAILED;
 		
 		if (memory == null) System.out.println("Error: Memory Proxy not found");
@@ -166,10 +151,8 @@ public class NaoFunctions
 		return result;
 	}
 	
-	@SuppressWarnings("unused")
-	int GetFromMemory(String dataName)
+	int GetFromMemory(ALMemoryProxy memory, String dataName)
 	{
-		ALMemoryProxy memory = new ALMemoryProxy(NAOQI_IP, NAOQI_PORT);
 		int data = -1;
 		
 		if (memory == null) System.out.println("Error: Memory Proxy not found");
@@ -184,11 +167,8 @@ public class NaoFunctions
 		return data;
 	}
 	
-	@SuppressWarnings("unused")
-	void TakePicture()
+	void TakePicture(ALVideoDeviceProxy videoDevice)
 	{
-		ALVideoDeviceProxy videoDevice = new ALVideoDeviceProxy(NAOQI_IP, NAOQI_PORT);
-		
 		if (videoDevice == null) System.out.println("Error: Video Proxy not found");
 		else
 		{

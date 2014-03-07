@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import ch.aplu.xboxcontroller.*;
+import com.aldebaran.proxy.*;
 
 public class RobotHandler
 {	
@@ -11,12 +12,12 @@ public class RobotHandler
 	 * Default Variables
 	 */
 	
-	// Robot Type (See RobotType Enumeration)
-	private RobotEnum.RobotType m_uiRobotType;
 	// Current State (See StateCode Enumeration)
 	private RobotEnum.StateCode m_uiState;
 	// Initialize Simulation boolean
 	private boolean m_bSimulationRunning;
+	// Simulation Type to run
+	private RobotEnum.SimulationType m_uiSimulationType;
 	
 	/*
 	 * Speech Handling
@@ -29,34 +30,41 @@ public class RobotHandler
 	// Speech step when speaking dialogue
 	private int m_uiSpeechStep;
 	
-	NaoFunctions myNao = new NaoFunctions(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
 	
 	/*
 	 * DEFAULT ROBOT FUNCTIONS
 	 */
-	RobotHandler(RobotEnum.RobotType type)
+	
+	ALMotionProxy naoMotion;
+	ALTextToSpeechProxy naoSpeech;
+	ALMemoryProxy naoMemory;
+	ALVideoDeviceProxy naoVideo;
+	
+	
+	NaoFunctions myNao = new NaoFunctions(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
+	
+	RobotHandler()
 	{
-		this.m_uiRobotType = type;
-		this.m_uiState = RobotEnum.StateCode.IDLE;
-		this.m_bSimulationRunning = false;
-		this.m_bIsSpeaking = false;
-		
 		Initialize();
+	}
+	
+	static
+	{
+		System.loadLibrary("jnaoqi");
 	}
 	
 	public void Initialize()
 	{
 		m_uiSpeechStep = 0;
+		m_uiState = RobotEnum.StateCode.IDLE;
+		m_uiSimulationType = RobotEnum.SimulationType.TYPE_NONE;
+		m_bSimulationRunning = false;
+		m_bIsSpeaking = false;
 		
-		switch (m_uiRobotType)
-		{
-			case TYPE_NAO:
-				System.out.println("Nao RobotHandler Initialized");
-				break;
-			case TYPE_SCOOTER:
-				System.out.println("Scooter RobotHandler Initialized");
-				break;
-		}
+		naoMotion = new ALMotionProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
+		naoSpeech = new ALTextToSpeechProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
+		naoMemory = new ALMemoryProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
+		naoVideo = new ALVideoDeviceProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
 	}
 	public RobotEnum.StateCode getState() {return m_uiState;}
 	public boolean isSimulationStarted() {return m_bSimulationRunning;}
@@ -70,8 +78,8 @@ public class RobotHandler
 		String url = "jdbc:mysql://hopper.wlu.ca:3306/";
         String dbName = "naodb";
         String driver = "com.mysql.jdbc.Driver";
-        String userName = "abdu0250";
-        String password = "pre7awac";
+        String userName = "nao";
+        String password = "nao";
         
         try
         {
@@ -171,7 +179,7 @@ public class RobotHandler
 		m_uiSpeechStep = 0;
 	}
 	// Manual override to control speech
-	public void overrideSpeech() {myNao.ManualSpeechOverride();}
+	public void overrideSpeech() {myNao.ManualSpeechOverride(naoSpeech);}
 	// Manual override to skip speech
 	public void stopSpeech() {m_uiSpeechStep = m_vSpeechArray.size();}
 	// Check for completion of Speech Array
@@ -181,7 +189,7 @@ public class RobotHandler
 	 * MOVEMENT ROBOT FUNCTIONS
 	 */
 	
-	public void overrideMovement() {myNao.ManualMovementOverride();}
+	public void overrideMovement() {myNao.ManualMovementOverride(naoMotion, naoSpeech);}
 	
 	
 }

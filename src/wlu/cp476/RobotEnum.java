@@ -5,10 +5,10 @@ public class RobotEnum
 	static final String NAO_IP = "169.254.172.97";
 	static final int NAO_PORT = 9559;
 	// Robot Types
-	public enum RobotType
+	public enum SimulationType
 	{
-		TYPE_NAO,
-		TYPE_SCOOTER
+		TYPE_NONE,
+		TYPE_GAME_MAZE
 	}
 	
 	// State Codes
@@ -28,6 +28,6 @@ public class RobotEnum
 		ACTION_FORWARD,
 		ACTION_STOP,
 		ACTION_TURN,
-		ACTION_GESTURE
+		ACTION_GESTURE,
 	}
 }
