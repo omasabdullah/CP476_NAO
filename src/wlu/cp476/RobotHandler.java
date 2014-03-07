@@ -1,6 +1,7 @@
 package wlu.cp476;
 
 import java.sql.*;
+import java.util.Scanner;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import ch.aplu.xboxcontroller.*;
@@ -10,6 +11,7 @@ public class RobotHandler
 {	
 	static final String NAO_IP = "169.254.172.97";
 	static final int NAO_PORT = 9559;
+	
 	// Robot Types
 	public enum SimulationType
 	{
@@ -45,8 +47,6 @@ public class RobotHandler
 	private StateCode m_uiState;
 	// Initialize Simulation boolean
 	private boolean m_bSimulationRunning;
-	// Simulation Type to run
-	private SimulationType m_uiSimulationType;
 	
 	/*
 	 * Speech Handling
@@ -72,9 +72,10 @@ public class RobotHandler
 	
 	NaoFunctions myNao = new NaoFunctions();
 	
-	RobotHandler()
+	RobotHandler(boolean debugMode)
 	{
-		Initialize();
+		Initialize(debugMode);
+		Start();
 	}
 	
 	static
@@ -82,19 +83,50 @@ public class RobotHandler
 		System.loadLibrary("jnaoqi");
 	}
 	
-	public void Initialize()
+	public void Initialize(boolean debug)
 	{
 		m_uiSpeechStep = 0;
 		m_uiState = StateCode.IDLE;
-		m_uiSimulationType = SimulationType.TYPE_NONE;
 		m_bSimulationRunning = false;
 		m_bIsSpeaking = false;
 		
-		naoMotion = new ALMotionProxy(NAO_IP, NAO_PORT);
-		naoSpeech = new ALTextToSpeechProxy(NAO_IP, NAO_PORT);
-		naoMemory = new ALMemoryProxy(NAO_IP, NAO_PORT);
-		naoVideo = new ALVideoDeviceProxy(NAO_IP, NAO_PORT);
-
+		if (!debug)
+		{
+			naoMotion = new ALMotionProxy(NAO_IP, NAO_PORT);
+			naoSpeech = new ALTextToSpeechProxy(NAO_IP, NAO_PORT);
+			naoMemory = new ALMemoryProxy(NAO_IP, NAO_PORT);
+			naoVideo = new ALVideoDeviceProxy(NAO_IP, NAO_PORT);
+		}
+	}
+	
+	public void Start()
+	{
+		System.out.println("Welcome to NAO's Simulation!");
+		
+		@SuppressWarnings("resource")
+		Scanner scanner = new Scanner(System.in);
+    	String inputLine = null;
+    	
+    	while (!(inputLine = scanner.nextLine()).equals("3"))
+    	{
+    		System.out.println("Please select what you would like to do below:");
+    		System.out.println("==============================================");
+    		System.out.println("1. Play Game");
+    		System.out.println("2. Credits");
+    		System.out.println("3. Quit");
+    		System.out.println();
+    		
+    		switch (inputLine)
+    		{
+	    		case "1":
+	    			startSimulation(SimulationType.TYPE_GAME_MAZE);
+	    			break;
+	    		case "2":
+	    			printCredits();
+	    			break;
+	    		case "3":	break;
+    		}
+    	}
 	}
 	public StateCode getState() {return m_uiState;}
 	public boolean isSimulationStarted() {return m_bSimulationRunning;}
@@ -148,41 +180,67 @@ public class RobotHandler
             e.printStackTrace();
     	}
 	}
-	public void startSimulation()
-	{
+	public void startSimulation(SimulationType simType)
+	{	
 		//Initialize simulation
 		m_bSimulationRunning = true;
 		
 		//Begin the simulation
 		while (m_bSimulationRunning)
 		{
-			switch (m_uiState)
+			switch (simType)
 			{
-				case IDLE:
+				case TYPE_GAME_MAZE:
+					startGameMaze();
+			case TYPE_NONE:
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+	void startGameMaze()
+	{
+		@SuppressWarnings("resource")
+		Scanner scanner = new Scanner(System.in);
+    	String inputLine = null;
+    	
+		System.out.println("Guide NAO through the maze! The controls are as follows:");
+		System.out.println("==============================================");
+		System.out.println("F - FORWARD");
+		System.out.println("R - TURN RIGHT");
+		System.out.println("L - TURN LEFT");
+		System.out.println("D - DONE");
+
+		while (!(inputLine = scanner.nextLine()).equals("D"))
+    	{	
+    		switch (inputLine)
+    		{
+				case "F":
+					myNao.MoveTo(naoMotion, 0.1f, 0.0f, 0.0f);
 					break;
-				case WAIT_IMAGE:
-					//Image Recognition Here
+				case "R":
+					myNao.MoveTo(naoMotion, 0.0f, 0.1f, 0.0f);
 					break;
-				case WAIT_DATABASE:
-					//Cross reference image of faceplate with database
+				case "L":
+					myNao.MoveTo(naoMotion, 0.0f, -0.1f, 0.0f);
 					break;
-				case WAIT_SPEAKING:
-					if (m_bIsSpeaking)
-						return;
-					break;
-				case ACTION_SPEAK:
-					m_bIsSpeaking = true;
-					break;
-				case ACTION_FORWARD:
-					break;
-				case ACTION_STOP:
-					break;
-				case ACTION_TURN:
+				case "D":
 					break;
 				default:
 					break;
-			}
-		}
+    		}
+    	}
+	}
+	
+	void printCredits()
+	{
+		System.out.println("The following people have worked on this project:");
+		System.out.println("Omas Abdullah");
+		System.out.println("Landon");
+		System.out.println("Shane Carr");
+		System.out.println("==============================================");
 	}
 
 	
