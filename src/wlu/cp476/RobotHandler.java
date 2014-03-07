@@ -11,6 +11,8 @@ public class RobotHandler
 {	
 	static final String NAO_IP = "169.254.172.97";
 	static final int NAO_PORT = 9559;
+	static final int RESULT_OK = 0;
+	static final int RESULT_FAILED = 1;
 	
 	// Robot Types
 	public enum SimulationType
@@ -59,7 +61,7 @@ public class RobotHandler
 	
 	
 	/*
-	 * DEFAULT ROBOT FUNCTIONS
+	 * DEFAULT ROBOT MODULES
 	 */
 	
 	ALMotionProxy naoMotion;
@@ -67,7 +69,7 @@ public class RobotHandler
 	ALMemoryProxy naoMemory;
 	ALVideoDeviceProxy naoVideo;
 	
-	
+	// References to functions. Maybe move these to RobotHandler
 	NaoFunctions myNao = new NaoFunctions();
 	
 	RobotHandler(boolean debugMode)
@@ -107,16 +109,17 @@ public class RobotHandler
 		
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
-    	String inputLine = null;
+    	String inputLine = "";
     	
-    	while (!(inputLine = scanner.nextLine()).equals("3"))
+    	while (!inputLine.equals("3"))
     	{
     		System.out.println("Please select what you would like to do below:");
-    		System.out.println("==============================================");
+    		printBreak();
     		System.out.println("1. Play Game");
     		System.out.println("2. Credits");
     		System.out.println("3. Quit");
     		System.out.println();
+    		inputLine = scanner.nextLine();
     		
     		switch (inputLine)
     		{
@@ -127,8 +130,12 @@ public class RobotHandler
 	    			printCredits();
 	    			break;
 	    		case "3":	break;
+	    		default: System.out.println("Unknown command");
+	    		break;
     		}
     	}
+    	
+    	scanner.close();
 	}
 	public StateCode getState() {return m_uiState;}
 	public boolean isSimulationStarted() {return m_bSimulationRunning;}
@@ -206,7 +213,7 @@ public class RobotHandler
 	{
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
-    	String inputLine = null;
+		String inputLine = "";
     	
 		System.out.println("Guide NAO through the maze! The controls are as follows:");
 		System.out.println("==============================================");
@@ -215,33 +222,50 @@ public class RobotHandler
 		System.out.println("L - TURN LEFT");
 		System.out.println("D - DONE");
 
-		while (!(inputLine = scanner.nextLine()).equals("D"))
-    	{	
+		while (!inputLine.equals("D"))
+    	{
+			inputLine = scanner.nextLine();
+			
     		switch (inputLine)
     		{
 				case "F":
-					myNao.MoveTo(naoMotion, 0.1f, 0.0f, 0.0f);
+					if (myNao.MoveTo(naoMotion, 0.1f, 0.0f, 0.0f) != RESULT_OK)
+						System.out.println("ERROR");
 					break;
 				case "R":
-					myNao.MoveTo(naoMotion, 0.0f, 0.1f, 0.0f);
+					if (myNao.MoveTo(naoMotion, 0.0f, 0.0f, (float) Math.PI/2) != RESULT_OK)
+						System.out.println("ERROR");
 					break;
 				case "L":
-					myNao.MoveTo(naoMotion, 0.0f, -0.1f, 0.0f);
+					if (myNao.MoveTo(naoMotion, 0.0f, 0.0f, (float) -Math.PI/2) != RESULT_OK)
+						System.out.println("ERROR");
 					break;
 				case "D":
 					break;
-				default:
+				default: System.out.println("Unknown Command");
 					break;
     		}
     	}
+		
+		scanner.close();
 	}
 	
 	void printCredits()
 	{
+		printBreak();
 		System.out.println("The following people have worked on this project:");
-		System.out.println("Omas Abdullah");
+		System.out.println("Omas");
+		System.out.println("Ryan");
+		System.out.println("Sean");
+		System.out.println("Peter");
 		System.out.println("Landon");
-		System.out.println("Shane Carr");
+		System.out.println("Shane");
+		System.out.println("Ryan");
+		printBreak();
+	}
+	
+	void printBreak()
+	{
 		System.out.println("==============================================");
 	}
 

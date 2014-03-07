@@ -20,7 +20,7 @@ public class NaoFunctions
 		System.loadLibrary("jnaoqi");
 	}
 	
-	int MoveTo(ALMotionProxy motion, float x, float y, float z)
+	int MoveTo(ALMotionProxy motion, float x, float y, float theta)
 	{
 		result = RESULT_FAILED;
 		
@@ -30,7 +30,7 @@ public class NaoFunctions
 			//MOVEMENT
 			motion.wakeUp();
 			motion.moveInit();
-			motion.moveTo(x, y, z);
+			motion.moveTo(x, y, theta);
 			motion.rest();
 			result = RESULT_OK;
 		}
