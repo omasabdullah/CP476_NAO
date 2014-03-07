@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/OmasWork/workspace/CP476_NAO/lib/jnaoqi-1.14.1.jar">
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="CP476_NAO/dll"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/OmasWork/workspace/CP476_NAO/lib/jnaoqi-1.14.1.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/OmasWork/workspace/CP476_NAO/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Program Files (x86)/MySQL/Connector J 5.1.26/mysql-connector-java-5.1.26-bin.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/OmasWork/workspace/CP476_NAO/lib/jaw.jar"/>
-	<classpathentry kind="lib" path="C:/Users/OmasWork/workspace/CP476_NAO/lib/XboxController.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files (x86)/MySQL/Connector J 5.1.26/mysql-connector-java-5.1.26-bin.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/OmasWork/workspace/CP476_NAO/lib/jaw.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/OmasWork/workspace/CP476_NAO/lib/XboxController.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -3,6 +3,7 @@ package wlu.cp476;
 import java.sql.*;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+import ch.aplu.xboxcontroller.*;
 
 public class RobotHandler
 {	
@@ -28,7 +29,7 @@ public class RobotHandler
 	// Speech step when speaking dialogue
 	private int m_uiSpeechStep;
 	
-	NaoFunctions myNao = new NaoFunctions("169.254.172.97", 9559);
+	NaoFunctions myNao = new NaoFunctions(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
 	
 	/*
 	 * DEFAULT ROBOT FUNCTIONS

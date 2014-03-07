@@ -2,6 +2,8 @@ package wlu.cp476;
 
 public class RobotEnum
 {
+	static final String NAO_IP = "169.254.172.97";
+	static final int NAO_PORT = 9559;
 	// Robot Types
 	public enum RobotType
 	{
