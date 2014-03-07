@@ -41,7 +41,7 @@ public class RobotHandler
 	ALVideoDeviceProxy naoVideo;
 	
 	
-	NaoFunctions myNao = new NaoFunctions(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
+	NaoFunctions myNao = new NaoFunctions();
 	
 	RobotHandler()
 	{
@@ -65,6 +65,7 @@ public class RobotHandler
 		naoSpeech = new ALTextToSpeechProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
 		naoMemory = new ALMemoryProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
 		naoVideo = new ALVideoDeviceProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
+
 	}
 	public RobotEnum.StateCode getState() {return m_uiState;}
 	public boolean isSimulationStarted() {return m_bSimulationRunning;}

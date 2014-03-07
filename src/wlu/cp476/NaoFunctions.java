@@ -6,20 +6,13 @@ import java.util.Scanner;
 import com.aldebaran.proxy.*;
 
 public class NaoFunctions
-{
-	private String NAOQI_IP = "nao.local";
-	private int NAOQI_PORT = 9559;
-	
+{	
 	static final int RESULT_OK = 0;
 	static final int RESULT_FAILED = 1;
 	
 	int result;
 	
-	NaoFunctions(String ipAddress, int port)
-	{
-		this.NAOQI_IP = ipAddress;
-		this.NAOQI_PORT = port;
-	}
+	NaoFunctions() {}
 
 	// This is required so that we can use the 'Variant' object
 	static
