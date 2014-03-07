@@ -8,16 +8,45 @@ import com.aldebaran.proxy.*;
 
 public class RobotHandler
 {	
+	static final String NAO_IP = "169.254.172.97";
+	static final int NAO_PORT = 9559;
+	// Robot Types
+	public enum SimulationType
+	{
+		TYPE_NONE,
+		TYPE_GAME_MAZE
+	}
+	
+	// State Codes
+	public enum StateCode
+	{
+		// Default OpCodes
+		IDLE,
+		
+		// Wait Opcodes
+		WAIT_IMAGE,
+		WAIT_DATABASE,
+		WAIT_SPEAKING,
+		WAIT_GESTURE,
+		
+		// Action OpCodes
+		ACTION_SPEAK,
+		ACTION_FORWARD,
+		ACTION_STOP,
+		ACTION_TURN,
+		ACTION_GESTURE,
+	}
+	
 	/*
 	 * Default Variables
 	 */
 	
 	// Current State (See StateCode Enumeration)
-	private RobotEnum.StateCode m_uiState;
+	private StateCode m_uiState;
 	// Initialize Simulation boolean
 	private boolean m_bSimulationRunning;
 	// Simulation Type to run
-	private RobotEnum.SimulationType m_uiSimulationType;
+	private SimulationType m_uiSimulationType;
 	
 	/*
 	 * Speech Handling
@@ -56,18 +85,18 @@ public class RobotHandler
 	public void Initialize()
 	{
 		m_uiSpeechStep = 0;
-		m_uiState = RobotEnum.StateCode.IDLE;
-		m_uiSimulationType = RobotEnum.SimulationType.TYPE_NONE;
+		m_uiState = StateCode.IDLE;
+		m_uiSimulationType = SimulationType.TYPE_NONE;
 		m_bSimulationRunning = false;
 		m_bIsSpeaking = false;
 		
-		naoMotion = new ALMotionProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
-		naoSpeech = new ALTextToSpeechProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
-		naoMemory = new ALMemoryProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
-		naoVideo = new ALVideoDeviceProxy(RobotEnum.NAO_IP, RobotEnum.NAO_PORT);
+		naoMotion = new ALMotionProxy(NAO_IP, NAO_PORT);
+		naoSpeech = new ALTextToSpeechProxy(NAO_IP, NAO_PORT);
+		naoMemory = new ALMemoryProxy(NAO_IP, NAO_PORT);
+		naoVideo = new ALVideoDeviceProxy(NAO_IP, NAO_PORT);
 
 	}
-	public RobotEnum.StateCode getState() {return m_uiState;}
+	public StateCode getState() {return m_uiState;}
 	public boolean isSimulationStarted() {return m_bSimulationRunning;}
 	public void stopSimulation()
 	{
