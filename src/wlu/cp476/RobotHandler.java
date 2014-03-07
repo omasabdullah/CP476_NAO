@@ -54,8 +54,6 @@ public class RobotHandler
 	
 	// Array of strings to be recited: [roomid, speech_id, delay, text, gestures]
 	private Vector<String[]> m_vSpeechArray = new Vector<String[]>();
-	// Boolean to check if Robot is in Speech
-	private boolean m_bIsSpeaking;
 	// Speech step when speaking dialogue
 	private int m_uiSpeechStep;
 	
@@ -88,15 +86,19 @@ public class RobotHandler
 		m_uiSpeechStep = 0;
 		m_uiState = StateCode.IDLE;
 		m_bSimulationRunning = false;
-		m_bIsSpeaking = false;
 		
-		if (!debug)
-		{
-			naoMotion = new ALMotionProxy(NAO_IP, NAO_PORT);
-			naoSpeech = new ALTextToSpeechProxy(NAO_IP, NAO_PORT);
-			naoMemory = new ALMemoryProxy(NAO_IP, NAO_PORT);
-			naoVideo = new ALVideoDeviceProxy(NAO_IP, NAO_PORT);
-		}
+		if (debug)
+			return;
+		
+		naoMotion = new ALMotionProxy(NAO_IP, NAO_PORT);
+		naoSpeech = new ALTextToSpeechProxy(NAO_IP, NAO_PORT);
+		naoMemory = new ALMemoryProxy(NAO_IP, NAO_PORT);
+		naoVideo = new ALVideoDeviceProxy(NAO_IP, NAO_PORT);
+		
+		if (naoMotion == null)	System.out.println("Motion Proxy not found");
+		if (naoSpeech == null)	System.out.println("Speech Proxy not found");
+		if (naoMemory == null)	System.out.println("Memory Proxy not found");
+		if (naoVideo == null)	System.out.println("Video Proxy not found");
 	}
 	
 	public void Start()
