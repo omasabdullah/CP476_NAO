@@ -75,6 +75,7 @@ public class RobotHandler
 	RobotHandler(boolean debugMode)
 	{
 		Initialize(debugMode);
+		//overrideSpeech();
 		Start();
 	}
 	
@@ -229,25 +230,23 @@ public class RobotHandler
     		switch (inputLine)
     		{
 				case "F":
-					if (myNao.MoveTo(naoMotion, 0.1f, 0.0f, 0.0f) != RESULT_OK)
+					if (myNao.MoveTo(naoMotion, 0.3f, 0.0f, 0.0f) != RESULT_OK)
 						System.out.println("ERROR");
 					break;
 				case "R":
-					if (myNao.MoveTo(naoMotion, 0.0f, 0.0f, (float) Math.PI/2) != RESULT_OK)
-						System.out.println("ERROR");
-					break;
-				case "L":
 					if (myNao.MoveTo(naoMotion, 0.0f, 0.0f, (float) -Math.PI/2) != RESULT_OK)
 						System.out.println("ERROR");
 					break;
-				case "D":
+				case "L":
+					if (myNao.MoveTo(naoMotion, 0.0f, 0.0f, (float) Math.PI/2) != RESULT_OK)
+						System.out.println("ERROR");
 					break;
+				case "D":
+					return;
 				default: System.out.println("Unknown Command");
 					break;
     		}
     	}
-		
-		scanner.close();
 	}
 	
 	void printCredits()

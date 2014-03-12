@@ -31,7 +31,7 @@ public class NaoFunctions
 			motion.wakeUp();
 			motion.moveInit();
 			motion.moveTo(x, y, theta);
-			motion.rest();
+			//motion.rest();
 			result = RESULT_OK;
 		}
 		
@@ -104,7 +104,7 @@ public class NaoFunctions
 			Scanner scanner = new Scanner(System.in);
 	    	String inputLine = null;
 	    	
-	    	tts.say("Hello. Speech Mode Activated. Enter what you would like me to say.");
+	    	tts.say("Hello");
 	    	System.out.println("Input speech: ");
 	    	//Append each line to a vector, press enter (carriage return) once all lines entered
 	    	while (!(inputLine = scanner.nextLine()).equals(""))
