@@ -38,21 +38,29 @@ public class NaoFunctions
 		return result;
 	}
 	
-	int HeadTurn(ALMotionProxy motion, float x, float y, float z)
+	int HeadOrientation(ALMotionProxy motion, float headYaw, float headPitch)
 	{
 		result = RESULT_FAILED;
 		
 		if (motion == null)	System.out.println("Error: Motion Proxy not found");
 		else
 		{
-			// This lets you use bound methods that excpects ALValue from Java:
-			Variant names  = new Variant(new String[] {"HeadYaw" });
-			Variant angles = new Variant(new float[] { -0.5f, 0.5f, 0.0f });
-			Variant times  = new Variant(new float[] {	1.0f, 2.0f, 3.0f });
+			Variant yawName  = new Variant(new String[] {"HeadYaw" });
+			Variant yawAngle = new Variant(new float[] { headYaw });
+			Variant yawTime  = new Variant(new float[] {	0.3f });
+			
+			Variant pitchName  = new Variant(new String[] {"HeadPitch" });
+			Variant pitchAngle = new Variant(new float[] { -headPitch });
+			Variant pitchTime  = new Variant(new float[] {	0.3f });
 	
 			motion.setStiffnesses(new Variant(new String[] {"HeadYaw"}), new Variant(new float[] {1.0f}));
-			motion.angleInterpolation(names, angles, times, true);
+			motion.setStiffnesses(new Variant(new String[] {"HeadPitch"}), new Variant(new float[] {1.0f}));
+			
+			motion.angleInterpolation(yawName, yawAngle, yawTime, true);
+			motion.angleInterpolation(pitchName, pitchAngle, pitchTime, true);
+			
 			motion.setStiffnesses(new Variant(new String[] {"HeadYaw"}), new Variant(new float[] {0.0f}));
+			motion.setStiffnesses(new Variant(new String[] {"HeadPitch"}), new Variant(new float[] {0.0f}));
 			result = RESULT_OK;
 		}
 		

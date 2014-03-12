@@ -6,6 +6,7 @@ import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import ch.aplu.xboxcontroller.*;
 import com.aldebaran.proxy.*;
+import de.fruitfly.ovr.*;
 
 public class RobotHandler
 {	
@@ -72,6 +73,11 @@ public class RobotHandler
 	// References to functions. Maybe move these to RobotHandler
 	NaoFunctions myNao = new NaoFunctions();
 	
+	public static void main(String[] args) throws InterruptedException
+	{
+		RobotHandler NaoH = new RobotHandler(false);
+	}
+	
 	RobotHandler(boolean debugMode)
 	{
 		Initialize(debugMode);
@@ -112,13 +118,14 @@ public class RobotHandler
 		Scanner scanner = new Scanner(System.in);
     	String inputLine = "";
     	
-    	while (!inputLine.equals("3"))
+    	while (!inputLine.equals("4"))
     	{
     		System.out.println("Please select what you would like to do below:");
     		printBreak();
     		System.out.println("1. Play Game");
     		System.out.println("2. Credits");
-    		System.out.println("3. Quit");
+    		System.out.println("3. OculusVision");
+    		System.out.println("4. Quit");
     		System.out.println();
     		inputLine = scanner.nextLine();
     		
@@ -130,13 +137,38 @@ public class RobotHandler
 	    		case "2":
 	    			printCredits();
 	    			break;
-	    		case "3":	break;
+	    		case "3":
+	    			initializeOculus();
+	    			break;
+	    		case "4":	break;
 	    		default: System.out.println("Unknown command");
 	    		break;
     		}
     	}
     	
     	scanner.close();
+	}
+	public void initializeOculus()
+	{
+		OculusRift or = new OculusRift();
+		or.init();
+		
+		HMDInfo hmdInfo = or.getHMDInfo();
+		System.out.println(hmdInfo);
+		
+		while (or.isInitialized())
+		{
+			or.poll();
+			//myNao.HeadTurn(naoMotion, or., y, z)
+			
+			System.out.println("Yaw: " + or.getYaw() + " Pitch: " + or.getPitch() + " Roll: " + or.getRoll());
+			myNao.HeadOrientation(naoMotion, or.getYaw(), or.getPitch());
+			
+			try{Thread.sleep(50);}
+			catch (InterruptedException e) {e.printStackTrace();}
+		}
+		
+		or.destroy();
 	}
 	public StateCode getState() {return m_uiState;}
 	public boolean isSimulationStarted() {return m_bSimulationRunning;}
@@ -209,7 +241,6 @@ public class RobotHandler
 			}
 		}
 	}
-	
 	void startGameMaze()
 	{
 		@SuppressWarnings("resource")
@@ -248,7 +279,6 @@ public class RobotHandler
     		}
     	}
 	}
-	
 	void printCredits()
 	{
 		printBreak();
@@ -262,12 +292,10 @@ public class RobotHandler
 		System.out.println("Ryan");
 		printBreak();
 	}
-	
 	void printBreak()
 	{
 		System.out.println("==============================================");
 	}
-
 	
 	/*
 	 * SPEECH ROBOT FUNCTIONS
