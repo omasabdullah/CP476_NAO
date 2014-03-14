@@ -113,6 +113,7 @@ public class NaoFunctions
 	    	String inputLine = null;
 	    	
 	    	tts.say("Hello");
+	    	tts.setVolume(1.0f);
 	    	System.out.println("Input speech: ");
 	    	//Append each line to a vector, press enter (carriage return) once all lines entered
 	    	while (!(inputLine = scanner.nextLine()).equals(""))
@@ -126,7 +127,7 @@ public class NaoFunctions
 	{
 		result = RESULT_FAILED;
 		
-		if (tts == null) System.out.println("Error: Talk Proxy not found");
+		if (tts == null) System.out.println("Error: Speech Proxy not found");
 		else
 		{
 	    	tts.say(text);
@@ -168,13 +169,15 @@ public class NaoFunctions
 		return data;
 	}
 	
-	void TakePicture(ALVideoDeviceProxy videoDevice)
+	byte[] TakePicture(ALVideoDeviceProxy videoDevice)
 	{
+		byte[] binaryImage = null;
+		
 		if (videoDevice == null) System.out.println("Error: Video Proxy not found");
 		else
 		{
-			BufferedImage img;
-			videoDevice.subscribe("java", 1, 11, 250);
+			//BufferedImage img;
+			videoDevice.subscribe("java", 2, 11, 250);
 			Variant ret = videoDevice.getImageRemote("java");
 			videoDevice.unsubscribe("java");
 
@@ -182,9 +185,9 @@ public class NaoFunctions
 			Variant imageV = ret.getElement(6);
 
 			// 	display image from byte array
-			byte[] binaryImage = imageV.toBinary();
-			
-			//ShowImage myView = new ShowImage(binaryImage);
+			binaryImage = imageV.toBinary();
 		}
+		
+		return binaryImage;
 	}
 }

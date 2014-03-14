@@ -4,13 +4,28 @@ import java.sql.*;
 import java.util.Scanner;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+
+import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import ch.aplu.xboxcontroller.*;
 import com.aldebaran.proxy.*;
 import de.fruitfly.ovr.*;
 
 public class RobotHandler
-{	
+{
+	public static void main(String[] args) throws InterruptedException
+	{
+		RobotHandler NaoH = new RobotHandler(false);
+	}
+
 	static final String NAO_IP = "169.254.172.97";
+	//static final String NAO_IP = "169.254.18.254";
 	static final int NAO_PORT = 9559;
 	static final int RESULT_OK = 0;
 	static final int RESULT_FAILED = 1;
@@ -51,6 +66,11 @@ public class RobotHandler
 	// Initialize Simulation boolean
 	private boolean m_bSimulationRunning;
 	
+	JFrame videoFrame = new JFrame();
+	JPanel videoLeftPanel = new JPanel();
+	JPanel videoRightPanel = new JPanel();
+	JLabel videoLabel = new JLabel();
+	
 	/*
 	 * Speech Handling
 	 */
@@ -73,16 +93,41 @@ public class RobotHandler
 	// References to functions. Maybe move these to RobotHandler
 	NaoFunctions myNao = new NaoFunctions();
 	
-	public static void main(String[] args) throws InterruptedException
-	{
-		RobotHandler NaoH = new RobotHandler(false);
-	}
-	
-	RobotHandler(boolean debugMode)
+	RobotHandler(boolean debugMode) throws InterruptedException
 	{
 		Initialize(debugMode);
+		
 		//overrideSpeech();
+//		while (true)
+//		{
+//			test();
+//			Thread.sleep(30);
+//		}
 		Start();
+	}
+	
+	public void test()
+	{
+		BufferedImage img;
+		byte[] buff = myNao.TakePicture(naoVideo);
+		int[] intArray;
+		intArray = new int[640*480];
+		for(int i = 0; i < 640*480; i++)
+		{
+			intArray[i] = ((255 & 0xFF) << 24) | //alpha
+				((buff[i*3+0] & 0xFF) << 16) | //red
+				((buff[i*3+1] & 0xFF) << 8)  | //green
+				((buff[i*3+2] & 0xFF) << 0); //blue
+		}
+
+		img = new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
+		img.setRGB(0, 0, 640, 480, intArray, 0, 640);
+		ImageIcon icon = new ImageIcon(img);
+		videoLabel.setIcon(icon);
+		videoLeftPanel.revalidate();
+		videoLeftPanel.repaint();
+		videoRightPanel.revalidate();
+		videoRightPanel.repaint();
 	}
 	
 	static
@@ -95,6 +140,14 @@ public class RobotHandler
 		m_uiSpeechStep = 0;
 		m_uiState = StateCode.IDLE;
 		m_bSimulationRunning = false;
+
+		videoFrame.getContentPane().add(videoLeftPanel,BorderLayout.EAST);
+		videoFrame.getContentPane().add(videoRightPanel,BorderLayout.WEST);
+		videoFrame.setSize(640, 480);
+		videoFrame.setVisible(true);
+		
+		videoLeftPanel.add(videoLabel);
+		videoRightPanel.add(videoLabel);
 		
 		if (debug)
 			return;
