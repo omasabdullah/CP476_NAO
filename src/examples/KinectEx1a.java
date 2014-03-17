@@ -34,12 +34,21 @@ public class KinectEx1a
     
     while (true)
     {
-      int skeletonId = kinect.getJoints(joints, 20);  // Blocks max 200 ms
-      if (skeletonId > -1)  // Valid
+      int skeletonId = kinect.getJoints(joints, 20);
+      if (skeletonId > -1)
       {
-        int handIndex = SkeletonJoint.HAND_RIGHT.ordinal();
-        System.out.println("(" + joints[handIndex].x + ", " 
-          + joints[handIndex].y + ", "  + joints[handIndex].z + ")");
+        int shoulderIndex = SkeletonJoint.SHOULDER_RIGHT.ordinal();
+        int elbowIndex = SkeletonJoint.ELBOW_RIGHT.ordinal();
+        
+        System.out.print("Hand: (" + joints[shoulderIndex].x + ", " 
+          + joints[shoulderIndex].y + ", "  + joints[shoulderIndex].z + ") Elbow: ");
+        System.out.print("(" + joints[elbowIndex].x + ", " 
+                + joints[elbowIndex].y + ", "  + joints[elbowIndex].z + ")");
+        
+        double rightShoulderRoll = Math.tan((double)Math.abs(joints[shoulderIndex].x-joints[elbowIndex].x)/
+				(double)Math.abs(joints[shoulderIndex].y-joints[elbowIndex].y));
+		
+		System.out.println("Angle is: " + rightShoulderRoll*180/Math.PI);
       }
       else
         System.out.println("Invalid skeleton");

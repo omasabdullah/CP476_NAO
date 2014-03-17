@@ -38,7 +38,7 @@ public class NaoFunctions
 		return result;
 	}
 	
-	int HeadOrientation(ALMotionProxy motion, float headYaw, float headPitch)
+	int HeadMovement(ALMotionProxy motion, float headYaw, float headPitch)
 	{
 		result = RESULT_FAILED;
 		
@@ -61,6 +61,30 @@ public class NaoFunctions
 			
 			motion.setStiffnesses(new Variant(new String[] {"HeadYaw"}), new Variant(new float[] {0.0f}));
 			motion.setStiffnesses(new Variant(new String[] {"HeadPitch"}), new Variant(new float[] {0.0f}));
+			result = RESULT_OK;
+		}
+		
+		return result;
+	}
+	
+	int rightShoulderMovement(ALMotionProxy motion, float rightShoulderPitch, float rightShoulderRoll)
+	{
+		result = RESULT_FAILED;
+		
+		if (motion == null)	System.out.println("Error: Motion Proxy not found");
+		else
+		{
+			Variant pitchName  = new Variant(new String[] {"RShoulderPitch" , "RShoulderRoll"});
+			Variant pitchAngle = new Variant(new float[] { rightShoulderPitch, rightShoulderRoll });
+			Variant pitchTime  = new Variant(new float[] {	0.0f, 2.0f });
+	
+			motion.setStiffnesses(new Variant(new String[] {"RShoulderPitch"}), new Variant(new float[] {1.0f}));
+			motion.setStiffnesses(new Variant(new String[] {"RShoulderRoll"}), new Variant(new float[] {1.0f}));
+			
+			motion.angleInterpolation(pitchName, pitchAngle, pitchTime, true);
+			
+			motion.setStiffnesses(new Variant(new String[] {"RShoulderPitch"}), new Variant(new float[] {1.0f}));
+			motion.setStiffnesses(new Variant(new String[] {"RShoulderRoll"}), new Variant(new float[] {1.0f}));
 			result = RESULT_OK;
 		}
 		

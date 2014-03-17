@@ -5,21 +5,33 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
-import ch.aplu.jaw.NativeHandler;
-import ch.aplu.kinect.Kinect;
+import ch.aplu.jaw.*;
+import ch.aplu.util.*;
+import ch.aplu.kinect.*;
 import ch.aplu.xboxcontroller.*;
 import com.aldebaran.proxy.*;
 import de.fruitfly.ovr.*;
 
 public class RobotHandler
 {
-	public static void main(String[] args) throws InterruptedException
+	public static void main(String[] args)
 	{
 		RobotHandler NaoH = new RobotHandler(true);
 		NaoH.Start();
@@ -31,6 +43,7 @@ public class RobotHandler
 	static final int RESULT_FAILED = 1;
 	private final String dllPath = 
 			Kinect.is64bit()? "KinectHandler64" : "KinectHandler";
+	private final int scaleFactor = 2;
 	private final String title = "Kinect Video Frame";
 	private final int ulx = 10; // Upper left x of window
 	private final int uly = 20; // Upper left y of window
@@ -76,10 +89,100 @@ public class RobotHandler
 	JPanel videoRightPanel = new JPanel();
 	JLabel videoLabel = new JLabel();
 	
-	Kinect kinect = new Kinect(dllPath, title, ulx, uly, width, height, 
-		      NativeHandler.WS_BORDER | NativeHandler.WS_VISIBLE);
+	Kinect kinect;
 	
+	public class SwingPaintDemo1
+	{
+		public MyPanel testPanel = new MyPanel();
+		
+	    SwingPaintDemo1()
+	    {
+	        SwingUtilities.invokeLater(new Runnable()
+	        {
+	            public void run()
+	            {
+	                createAndShowGUI();
+	            }
+	        });
+	    }
+	    
+	    private void createAndShowGUI()
+	    {
+	        JFrame f = new JFrame("Swing Paint Demo");
+	        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        f.setSize(1280,800);
+	        f.add(testPanel);
+	        f.pack();
+	        f.setVisible(true);
+	    }
+	}
 	
+	class MyPanel extends JPanel
+	{
+		private int[] rshoulder = {25, 25};
+	    private int[] relbow = {25, 25};
+	    private int squareW = 10;
+	    private int squareH = 10;
+	    
+	    public MyPanel()
+	    {
+	        setBorder(BorderFactory.createLineBorder(Color.black));
+	    }
+	    
+	    public void plotPoint(int x, int y, int joint)
+	    {
+	    	switch (joint)
+	    	{
+	    		case 0:		break;
+	    		case 1:		break;
+	    		case 2:		break;
+	    		case 3:		break;
+	    		case 4:		break;
+	    		case 5:		break;
+	    		case 6:		break;
+	    		case 7:		break;
+	    		case 8:
+	    			repaint(rshoulder[0],rshoulder[1],squareW,squareH);
+	    			rshoulder[0] = x;
+	    			rshoulder[1] = y;
+	    			repaint(rshoulder[0],rshoulder[1],squareW,squareH);
+	    			break;
+	    		case 9:
+	    			repaint(relbow[0],relbow[1],squareW,squareH);
+	    			relbow[0] = x;
+	    			relbow[1] = y;
+	    			repaint(relbow[0],relbow[1],squareW,squareH);
+	    			break;
+	    		case 10:	break;
+	    		case 11:	break;
+	    		case 12:	break;
+	    		case 13:	break;
+	    		case 14:	break;
+	    		case 15:	break;
+	    		case 16:	break;
+	    		case 17:	break;
+	    		case 18:	break;
+	    		case 19:	break;
+	    		case 20:	break;
+	    		default:	break;
+	    	} 
+	    }
+
+	    public Dimension getPreferredSize()
+	    {
+	        return new Dimension(1280,800);
+	    }
+
+	    public void paintComponent(Graphics g)
+	    {
+	        super.paintComponent(g);       
+
+	        // Draw Text
+	        g.setColor(Color.RED);
+	        g.fillRect(rshoulder[0],rshoulder[1],squareW,squareH);
+	        g.fillRect(relbow[0],relbow[1],squareW,squareH);
+	    }  
+	}
 	
 	/*
 	 * Speech Handling
@@ -134,17 +237,18 @@ public class RobotHandler
 		Scanner scanner = new Scanner(System.in);
     	String inputLine = "";
     	
-    	while (!inputLine.equals("6"))
+    	while (!inputLine.equals("7"))
     	{
     		inputLine = "";
     		System.out.println("Please select what you would like to do below:");
     		printBreak();
     		System.out.println("1. Play Game");
     		System.out.println("2. Credits");
-    		System.out.println("3. OculusVision");
+    		System.out.println("3. Initialize Oculus");
     		System.out.println("4. Override Speech");
     		System.out.println("5. Initialize Video");
-    		System.out.println("6. Quit");
+    		System.out.println("6. Initialize Kinect");
+    		System.out.println("7. Quit");
     		System.out.println();
     		inputLine = scanner.nextLine();
     		
@@ -155,7 +259,8 @@ public class RobotHandler
 	    		case "3":	initializeOculus();	break;
 	    		case "4":	overrideSpeech();	break;
 	    		case "5":	initializeVideo();	break;
-	    		case "6":						break;
+	    		case "6":	initializeKinect();	break;
+	    		case "7":						break;
 	    		default: System.out.println("Unknown command");
 	    		break;
     		}
@@ -222,13 +327,59 @@ public class RobotHandler
 			or.poll();
 			
 			System.out.println("Yaw: " + or.getYaw() + " Pitch: " + or.getPitch() + " Roll: " + or.getRoll());
-			myNao.HeadOrientation(naoMotion, or.getYaw(), or.getPitch());
+			myNao.HeadMovement(naoMotion, or.getYaw(), or.getPitch());
 			
 			try{Thread.sleep(50);}
 			catch (InterruptedException e) {e.printStackTrace();}
 		}
 		
 		or.destroy();
+	}
+	private void initializeKinect()
+	{
+		kinect = new Kinect(dllPath, title, ulx, uly, width, height, 
+			      NativeHandler.WS_BORDER | NativeHandler.WS_VISIBLE);
+		SwingPaintDemo1 test = new SwingPaintDemo1();
+		new Console(new Position(200, 10), 
+			      new Size(500, 500), new Font("Courier", Font.PLAIN, 12));
+		
+		kinect.setWindowScaleFactor(scaleFactor);
+		Point3D[] joints = new Point3D[20];
+		for (int i = 0; i < 20; i++)
+			joints[i] = new Point3D();
+		
+
+		while (true)
+		{
+			int skeletonId = kinect.getJoints(joints, 20);
+			if (skeletonId > -1)
+			{
+				int rightShoulderIndex = SkeletonJoint.SHOULDER_RIGHT.ordinal();
+				int rightElbowIndex = SkeletonJoint.ELBOW_RIGHT.ordinal();
+				
+				test.testPanel.plotPoint(joints[rightShoulderIndex].x, joints[rightShoulderIndex].y, rightShoulderIndex);
+				test.testPanel.plotPoint(joints[rightElbowIndex].x, joints[rightElbowIndex].y, rightElbowIndex);
+				
+				double rightShoulderRoll = Math.tan((double)Math.abs(joints[rightShoulderIndex].x-joints[rightElbowIndex].x)/
+						(double)Math.abs(joints[rightShoulderIndex].y-joints[rightElbowIndex].y));
+				
+				double angle = rightShoulderRoll*180/Math.PI;
+				
+				if (angle < 76 && angle > 0)
+				{
+					//myNao.rightShoulderMovement(naoMotion, 0.0f, (float)rightShoulderRoll);
+					System.out.println("Setting Angle to" + (float)rightShoulderRoll);
+				}
+    
+				System.out.println("Right Shoulder: (" + joints[rightShoulderIndex].x + ", " 
+						+ joints[rightShoulderIndex].y + ", "  + joints[rightShoulderIndex].z + ")");
+
+				System.out.println("Right Elbow: (" + joints[rightElbowIndex].x + ", " 
+						+ joints[rightElbowIndex].y + ", "  + joints[rightElbowIndex].z + ")");
+			}
+			else
+				System.out.println("Invalid skeleton");
+		}
 	}
 	public void DBConnect(int RoomNumber)
 	{
