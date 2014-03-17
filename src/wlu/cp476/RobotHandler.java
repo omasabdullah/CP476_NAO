@@ -123,7 +123,6 @@ public class RobotHandler
 		if (naoMemory == null)	System.out.println("Memory Proxy not found");
 		if (naoVideo == null)	System.out.println("Video Proxy not found");
 	}
-	
 	public void Start()
 	{
 		System.out.println("Welcome to NAO's Simulation!");
@@ -159,6 +158,11 @@ public class RobotHandler
     	
     	scanner.close();
 	}
+	
+	// Getters
+	public StateCode getState() {return m_uiState;}
+
+	// Initializers
 	private void initializeVideo()
 	{
 		videoFrame.getContentPane().add(videoLeftPanel,BorderLayout.EAST);
@@ -223,7 +227,6 @@ public class RobotHandler
 		
 		or.destroy();
 	}
-	public StateCode getState() {return m_uiState;}
 	public void DBConnect(int RoomNumber)
 	{
 		String url = "jdbc:mysql://hopper.wlu.ca:3306/";
@@ -269,6 +272,7 @@ public class RobotHandler
             e.printStackTrace();
     	}
 	}
+	
 	private void startGameMaze()
 	{
 		Scanner scanner = new Scanner(System.in);
@@ -309,6 +313,8 @@ public class RobotHandler
 		
 		scanner.close();
 	}
+	
+	// Printing
 	void printCredits()
 	{
 		printBreak();
@@ -349,7 +355,6 @@ public class RobotHandler
 		System.out.println("Speech Complete");
 		m_uiSpeechStep = 0;
 	}
-	// Manual override to control speech
 	public void overrideSpeech() {myNao.ManualSpeechOverride(naoSpeech);}
 	// Manual override to skip speech
 	public void stopSpeech() {m_uiSpeechStep = m_vSpeechArray.size();}
