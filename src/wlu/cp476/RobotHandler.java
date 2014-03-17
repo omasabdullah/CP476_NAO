@@ -96,17 +96,101 @@ public class RobotHandler
 	RobotHandler(boolean debugMode) throws InterruptedException
 	{
 		Initialize(debugMode);
-		
-		//overrideSpeech();
-//		while (true)
-//		{
-//			test();
-//			Thread.sleep(30);
-//		}
 		Start();
 	}
 	
-	public void test()
+	static
+	{
+		System.loadLibrary("jnaoqi");
+	}
+	
+	public void Initialize(boolean debug)
+	{
+		m_uiSpeechStep = 0;
+		m_uiState = StateCode.IDLE;
+		m_bSimulationRunning = false;
+		
+		if (debug)
+			return;
+		
+		naoMotion = new ALMotionProxy(NAO_IP, NAO_PORT);
+		naoSpeech = new ALTextToSpeechProxy(NAO_IP, NAO_PORT);
+		naoMemory = new ALMemoryProxy(NAO_IP, NAO_PORT);
+		naoVideo = new ALVideoDeviceProxy(NAO_IP, NAO_PORT);
+		
+		if (naoMotion == null)	System.out.println("Motion Proxy not found");
+		if (naoSpeech == null)	System.out.println("Speech Proxy not found");
+		if (naoMemory == null)	System.out.println("Memory Proxy not found");
+		if (naoVideo == null)	System.out.println("Video Proxy not found");
+	}
+	
+	public void Start()
+	{
+		System.out.println("Welcome to NAO's Simulation!");
+		
+		Scanner scanner = new Scanner(System.in);
+    	String inputLine = "";
+    	
+    	while (!inputLine.equals("6"))
+    	{
+    		System.out.println("Please select what you would like to do below:");
+    		printBreak();
+    		System.out.println("1. Play Game");
+    		System.out.println("2. Credits");
+    		System.out.println("3. OculusVision");
+    		System.out.println("4. Override Speech");
+    		System.out.println("5. Initialize Video");
+    		System.out.println("6. Quit");
+    		System.out.println();
+    		inputLine = scanner.nextLine();
+    		
+    		switch (inputLine)
+    		{
+	    		case "1":
+	    			startSimulation(SimulationType.TYPE_GAME_MAZE);
+	    			break;
+	    		case "2":
+	    			printCredits();
+	    			break;
+	    		case "3":
+	    			initializeOculus();
+	    			break;
+	    		case "4":
+	    			overrideSpeech();
+	    			break;
+	    		case "5":
+	    			initializeVideo();
+	    			break;
+	    		case "6":
+	    			break;
+	    		default: System.out.println("Unknown command");
+	    		break;
+    		}
+    	}
+    	
+    	scanner.close();
+	}
+	public void initializeVideo()
+	{
+		videoFrame.getContentPane().add(videoLeftPanel,BorderLayout.EAST);
+		videoFrame.getContentPane().add(videoRightPanel,BorderLayout.WEST);
+		videoFrame.setSize(640, 480);
+		videoFrame.setVisible(true);
+		
+		videoLeftPanel.add(videoLabel);
+		videoRightPanel.add(videoLabel);
+		
+		while (true)
+		{
+			updateImage();
+			try {
+				Thread.sleep(30);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	public void updateImage()
 	{
 		BufferedImage img;
 		byte[] buff = myNao.TakePicture(naoVideo);
@@ -128,78 +212,6 @@ public class RobotHandler
 		videoLeftPanel.repaint();
 		videoRightPanel.revalidate();
 		videoRightPanel.repaint();
-	}
-	
-	static
-	{
-		System.loadLibrary("jnaoqi");
-	}
-	
-	public void Initialize(boolean debug)
-	{
-		m_uiSpeechStep = 0;
-		m_uiState = StateCode.IDLE;
-		m_bSimulationRunning = false;
-
-		videoFrame.getContentPane().add(videoLeftPanel,BorderLayout.EAST);
-		videoFrame.getContentPane().add(videoRightPanel,BorderLayout.WEST);
-		videoFrame.setSize(640, 480);
-		videoFrame.setVisible(true);
-		
-		videoLeftPanel.add(videoLabel);
-		videoRightPanel.add(videoLabel);
-		
-		if (debug)
-			return;
-		
-		naoMotion = new ALMotionProxy(NAO_IP, NAO_PORT);
-		naoSpeech = new ALTextToSpeechProxy(NAO_IP, NAO_PORT);
-		naoMemory = new ALMemoryProxy(NAO_IP, NAO_PORT);
-		naoVideo = new ALVideoDeviceProxy(NAO_IP, NAO_PORT);
-		
-		if (naoMotion == null)	System.out.println("Motion Proxy not found");
-		if (naoSpeech == null)	System.out.println("Speech Proxy not found");
-		if (naoMemory == null)	System.out.println("Memory Proxy not found");
-		if (naoVideo == null)	System.out.println("Video Proxy not found");
-	}
-	
-	public void Start()
-	{
-		System.out.println("Welcome to NAO's Simulation!");
-		
-		@SuppressWarnings("resource")
-		Scanner scanner = new Scanner(System.in);
-    	String inputLine = "";
-    	
-    	while (!inputLine.equals("4"))
-    	{
-    		System.out.println("Please select what you would like to do below:");
-    		printBreak();
-    		System.out.println("1. Play Game");
-    		System.out.println("2. Credits");
-    		System.out.println("3. OculusVision");
-    		System.out.println("4. Quit");
-    		System.out.println();
-    		inputLine = scanner.nextLine();
-    		
-    		switch (inputLine)
-    		{
-	    		case "1":
-	    			startSimulation(SimulationType.TYPE_GAME_MAZE);
-	    			break;
-	    		case "2":
-	    			printCredits();
-	    			break;
-	    		case "3":
-	    			initializeOculus();
-	    			break;
-	    		case "4":	break;
-	    		default: System.out.println("Unknown command");
-	    		break;
-    		}
-    	}
-    	
-    	scanner.close();
 	}
 	public void initializeOculus()
 	{
