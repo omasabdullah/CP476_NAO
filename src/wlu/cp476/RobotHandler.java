@@ -3,7 +3,6 @@ package wlu.cp476;
 import java.sql.*;
 import java.util.Scanner;
 import java.util.Vector;
-import java.util.concurrent.TimeUnit;
 
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
@@ -12,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import ch.aplu.jaw.NativeHandler;
 import ch.aplu.kinect.Kinect;
 import ch.aplu.xboxcontroller.*;
 import com.aldebaran.proxy.*;
@@ -67,15 +67,19 @@ public class RobotHandler
 	/*
 	 * Default Variables
 	 */
-	
-	// Current State (See StateCode Enumeration)
 	private StateCode m_uiState;
 	
 	// Oculus Rift Frame
+	OculusRift or = new OculusRift();
 	JFrame videoFrame = new JFrame();
 	JPanel videoLeftPanel = new JPanel();
 	JPanel videoRightPanel = new JPanel();
 	JLabel videoLabel = new JLabel();
+	
+	Kinect kinect = new Kinect(dllPath, title, ulx, uly, width, height, 
+		      NativeHandler.WS_BORDER | NativeHandler.WS_VISIBLE);
+	
+	
 	
 	/*
 	 * Speech Handling
@@ -98,7 +102,7 @@ public class RobotHandler
 	// References to functions. Maybe move these to RobotHandler
 	NaoFunctions myNao = new NaoFunctions();
 	
-	RobotHandler(boolean debugMode) throws InterruptedException
+	RobotHandler(boolean debugMode)
 	{
 		Initialize(debugMode);
 	}
@@ -132,6 +136,7 @@ public class RobotHandler
     	
     	while (!inputLine.equals("6"))
     	{
+    		inputLine = "";
     		System.out.println("Please select what you would like to do below:");
     		printBreak();
     		System.out.println("1. Play Game");
@@ -145,7 +150,7 @@ public class RobotHandler
     		
     		switch (inputLine)
     		{
-	    		case "1":	startGameMaze();	break;
+	    		case "1":	startGameMaze(scanner);	break;
 	    		case "2":	printCredits();		break;
 	    		case "3":	initializeOculus();	break;
 	    		case "4":	overrideSpeech();	break;
@@ -208,9 +213,7 @@ public class RobotHandler
 	}
 	private void initializeOculus()
 	{
-		OculusRift or = new OculusRift();
 		or.init();
-		
 		HMDInfo hmdInfo = or.getHMDInfo();
 		System.out.println(hmdInfo);
 		
@@ -273,9 +276,8 @@ public class RobotHandler
     	}
 	}
 	
-	private void startGameMaze()
+	private void startGameMaze(Scanner scanner)
 	{
-		Scanner scanner = new Scanner(System.in);
 		String inputLine = "";
     	
 		System.out.println("Guide NAO through the maze! The controls are as follows:");
@@ -305,13 +307,12 @@ public class RobotHandler
 					break;
 				case "D":
 					System.out.println("Game Over!");
+					printBreak();
 					break;
 				default: System.out.println("Unknown Command");
 					break;
     		}
     	}
-		
-		scanner.close();
 	}
 	
 	// Printing
@@ -337,8 +338,7 @@ public class RobotHandler
 	 * SPEECH ROBOT FUNCTIONS
 	 */
 	
-	//Call after loading string[] vector to initiate speech
-	public void startSpeech() throws InterruptedException
+	public void startSpeech()
 	{
 		while (m_uiSpeechStep < m_vSpeechArray.size())
 		{
@@ -348,7 +348,8 @@ public class RobotHandler
 			System.out.println(m_vSpeechArray.get(m_uiSpeechStep)[3]);
 			System.out.println("Setting delay to: " + delay + " seconds");
 			System.out.println();
-			TimeUnit.MILLISECONDS.sleep(delay);
+			try {Thread.sleep(delay);}
+			catch (InterruptedException e) {e.printStackTrace();}
 			m_uiSpeechStep++;
 		}
 		
@@ -356,9 +357,7 @@ public class RobotHandler
 		m_uiSpeechStep = 0;
 	}
 	public void overrideSpeech() {myNao.ManualSpeechOverride(naoSpeech);}
-	// Manual override to skip speech
 	public void stopSpeech() {m_uiSpeechStep = m_vSpeechArray.size();}
-	// Check for completion of Speech Array
 	public boolean isCompletedSpeech() {return (m_uiSpeechStep == m_vSpeechArray.size());}
 	
 	/*
@@ -366,6 +365,4 @@ public class RobotHandler
 	 */
 	
 	public void overrideMovement() {myNao.ManualMovementOverride(naoMotion, naoSpeech);}
-	
-	
 }

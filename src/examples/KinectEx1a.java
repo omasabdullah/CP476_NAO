@@ -26,7 +26,7 @@ public class KinectEx1a
       new Size(500, 500), new Font("Courier", Font.PLAIN, 12));
 
     Kinect kinect = new Kinect(dllPath, title, ulx, uly, width, height, 
-      NativeHandler.WS_BORDER | NativeHandler.WS_VISIBLE);  
+      NativeHandler.WS_BORDER | NativeHandler.WS_VISIBLE);
     kinect.setWindowScaleFactor(scaleFactor);
     Point3D[] joints = new Point3D[20];
     for (int i = 0; i < 20; i++)
