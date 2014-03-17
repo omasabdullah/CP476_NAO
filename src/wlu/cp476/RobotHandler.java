@@ -7,12 +7,12 @@ import java.util.concurrent.TimeUnit;
 
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import ch.aplu.kinect.Kinect;
 import ch.aplu.xboxcontroller.*;
 import com.aldebaran.proxy.*;
 import de.fruitfly.ovr.*;
@@ -21,14 +21,21 @@ public class RobotHandler
 {
 	public static void main(String[] args) throws InterruptedException
 	{
-		RobotHandler NaoH = new RobotHandler(false);
+		RobotHandler NaoH = new RobotHandler(true);
+		NaoH.Start();
 	}
 
 	static final String NAO_IP = "169.254.172.97";
-	//static final String NAO_IP = "169.254.18.254";
 	static final int NAO_PORT = 9559;
 	static final int RESULT_OK = 0;
 	static final int RESULT_FAILED = 1;
+	private final String dllPath = 
+			Kinect.is64bit()? "KinectHandler64" : "KinectHandler";
+	private final String title = "Kinect Video Frame";
+	private final int ulx = 10; // Upper left x of window
+	private final int uly = 20; // Upper left y of window
+	private final int width = 640;  // Width of window in pixels
+	private final int height = 480; // Height of window in pixels
 	
 	// Robot Types
 	public enum SimulationType
@@ -63,9 +70,8 @@ public class RobotHandler
 	
 	// Current State (See StateCode Enumeration)
 	private StateCode m_uiState;
-	// Initialize Simulation boolean
-	private boolean m_bSimulationRunning;
 	
+	// Oculus Rift Frame
 	JFrame videoFrame = new JFrame();
 	JPanel videoLeftPanel = new JPanel();
 	JPanel videoRightPanel = new JPanel();
@@ -79,7 +85,6 @@ public class RobotHandler
 	private Vector<String[]> m_vSpeechArray = new Vector<String[]>();
 	// Speech step when speaking dialogue
 	private int m_uiSpeechStep;
-	
 	
 	/*
 	 * DEFAULT ROBOT MODULES
@@ -96,19 +101,14 @@ public class RobotHandler
 	RobotHandler(boolean debugMode) throws InterruptedException
 	{
 		Initialize(debugMode);
-		Start();
 	}
 	
-	static
-	{
-		System.loadLibrary("jnaoqi");
-	}
+	static {System.loadLibrary("jnaoqi");}
 	
-	public void Initialize(boolean debug)
+	private void Initialize(boolean debug)
 	{
 		m_uiSpeechStep = 0;
 		m_uiState = StateCode.IDLE;
-		m_bSimulationRunning = false;
 		
 		if (debug)
 			return;
@@ -146,23 +146,12 @@ public class RobotHandler
     		
     		switch (inputLine)
     		{
-	    		case "1":
-	    			startSimulation(SimulationType.TYPE_GAME_MAZE);
-	    			break;
-	    		case "2":
-	    			printCredits();
-	    			break;
-	    		case "3":
-	    			initializeOculus();
-	    			break;
-	    		case "4":
-	    			overrideSpeech();
-	    			break;
-	    		case "5":
-	    			initializeVideo();
-	    			break;
-	    		case "6":
-	    			break;
+	    		case "1":	startGameMaze();	break;
+	    		case "2":	printCredits();		break;
+	    		case "3":	initializeOculus();	break;
+	    		case "4":	overrideSpeech();	break;
+	    		case "5":	initializeVideo();	break;
+	    		case "6":						break;
 	    		default: System.out.println("Unknown command");
 	    		break;
     		}
@@ -170,7 +159,7 @@ public class RobotHandler
     	
     	scanner.close();
 	}
-	public void initializeVideo()
+	private void initializeVideo()
 	{
 		videoFrame.getContentPane().add(videoLeftPanel,BorderLayout.EAST);
 		videoFrame.getContentPane().add(videoRightPanel,BorderLayout.WEST);
@@ -190,7 +179,7 @@ public class RobotHandler
 			}
 		}
 	}
-	public void updateImage()
+	private void updateImage()
 	{
 		BufferedImage img;
 		byte[] buff = myNao.TakePicture(naoVideo);
@@ -213,7 +202,7 @@ public class RobotHandler
 		videoRightPanel.revalidate();
 		videoRightPanel.repaint();
 	}
-	public void initializeOculus()
+	private void initializeOculus()
 	{
 		OculusRift or = new OculusRift();
 		or.init();
@@ -224,7 +213,6 @@ public class RobotHandler
 		while (or.isInitialized())
 		{
 			or.poll();
-			//myNao.HeadTurn(naoMotion, or., y, z)
 			
 			System.out.println("Yaw: " + or.getYaw() + " Pitch: " + or.getPitch() + " Roll: " + or.getRoll());
 			myNao.HeadOrientation(naoMotion, or.getYaw(), or.getPitch());
@@ -236,12 +224,6 @@ public class RobotHandler
 		or.destroy();
 	}
 	public StateCode getState() {return m_uiState;}
-	public boolean isSimulationStarted() {return m_bSimulationRunning;}
-	public void stopSimulation()
-	{
-		//Cancel simulation
-		m_bSimulationRunning = false;
-	}
 	public void DBConnect(int RoomNumber)
 	{
 		String url = "jdbc:mysql://hopper.wlu.ca:3306/";
@@ -287,28 +269,8 @@ public class RobotHandler
             e.printStackTrace();
     	}
 	}
-	public void startSimulation(SimulationType simType)
-	{	
-		//Initialize simulation
-		m_bSimulationRunning = true;
-		
-		//Begin the simulation
-		while (m_bSimulationRunning)
-		{
-			switch (simType)
-			{
-				case TYPE_GAME_MAZE:
-					startGameMaze();
-			case TYPE_NONE:
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	void startGameMaze()
+	private void startGameMaze()
 	{
-		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		String inputLine = "";
     	
@@ -338,11 +300,14 @@ public class RobotHandler
 						System.out.println("ERROR");
 					break;
 				case "D":
-					return;
+					System.out.println("Game Over!");
+					break;
 				default: System.out.println("Unknown Command");
 					break;
     		}
     	}
+		
+		scanner.close();
 	}
 	void printCredits()
 	{
