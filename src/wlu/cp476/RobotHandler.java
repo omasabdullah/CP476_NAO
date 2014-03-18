@@ -9,10 +9,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
@@ -43,7 +45,7 @@ public class RobotHandler
 	static final int RESULT_FAILED = 1;
 	private final String dllPath = 
 			Kinect.is64bit()? "KinectHandler64" : "KinectHandler";
-	private final int scaleFactor = 2;
+	private final int scaleFactor = 1;
 	private final String title = "Kinect Video Frame";
 	private final int ulx = 10; // Upper left x of window
 	private final int uly = 20; // Upper left y of window
@@ -119,53 +121,26 @@ public class RobotHandler
 	
 	class MyPanel extends JPanel
 	{
-		private int[] rshoulder = {25, 25};
-	    private int[] relbow = {25, 25};
 	    private int squareW = 10;
 	    private int squareH = 10;
+	    private int[][] bones = new int[20][2];
 	    
 	    public MyPanel()
 	    {
 	        setBorder(BorderFactory.createLineBorder(Color.black));
+	        
+	        for (int i = 0; i < 20; i++)
+		    {
+		    	bones[i][0] = 25;
+		    	bones[i][1] = 25;
+		    }
 	    }
 	    
 	    public void plotPoint(int x, int y, int joint)
 	    {
-	    	switch (joint)
-	    	{
-	    		case 0:		break;
-	    		case 1:		break;
-	    		case 2:		break;
-	    		case 3:		break;
-	    		case 4:		break;
-	    		case 5:		break;
-	    		case 6:		break;
-	    		case 7:		break;
-	    		case 8:
-	    			repaint(rshoulder[0],rshoulder[1],squareW,squareH);
-	    			rshoulder[0] = x;
-	    			rshoulder[1] = y;
-	    			repaint(rshoulder[0],rshoulder[1],squareW,squareH);
-	    			break;
-	    		case 9:
-	    			repaint(relbow[0],relbow[1],squareW,squareH);
-	    			relbow[0] = x;
-	    			relbow[1] = y;
-	    			repaint(relbow[0],relbow[1],squareW,squareH);
-	    			break;
-	    		case 10:	break;
-	    		case 11:	break;
-	    		case 12:	break;
-	    		case 13:	break;
-	    		case 14:	break;
-	    		case 15:	break;
-	    		case 16:	break;
-	    		case 17:	break;
-	    		case 18:	break;
-	    		case 19:	break;
-	    		case 20:	break;
-	    		default:	break;
-	    	} 
+	    	repaint(bones[joint][0], bones[joint][1], squareW, squareH);
+	    	bones[joint][0] = x;
+	    	bones[joint][1] = y;
 	    }
 
 	    public Dimension getPreferredSize()
@@ -175,12 +150,46 @@ public class RobotHandler
 
 	    public void paintComponent(Graphics g)
 	    {
-	        super.paintComponent(g);       
+	        super.paintComponent(g);
+	       
+	        Graphics2D g2 = (Graphics2D) g;
 
 	        // Draw Text
 	        g.setColor(Color.RED);
-	        g.fillRect(rshoulder[0],rshoulder[1],squareW,squareH);
-	        g.fillRect(relbow[0],relbow[1],squareW,squareH);
+	        
+	        for (int i = 0; i < 20; i++)
+	        {
+	        	g.fillRect(bones[i][0],bones[i][1],squareW,squareH);
+	        }
+	        
+	        // Head and Spine
+	        g2.draw(new Line2D.Double(bones[1][0]+5, bones[1][1]+5, bones[2][0]+5, bones[2][1]+5));
+	        g2.draw(new Line2D.Double(bones[3][0]+5, bones[3][1]+5, bones[2][0]+5, bones[2][1]+5));
+	        g2.draw(new Line2D.Double(bones[1][0]+5, bones[1][1]+5, bones[0][0]+5, bones[0][1]+5));
+	        
+	        // Left Arm
+	        g2.draw(new Line2D.Double(bones[2][0]+5, bones[2][1]+5, bones[4][0]+5, bones[4][1]+5));
+	        g2.draw(new Line2D.Double(bones[4][0]+5, bones[4][1]+5, bones[5][0]+5, bones[5][1]+5));
+	        g2.draw(new Line2D.Double(bones[5][0]+5, bones[5][1]+5, bones[6][0]+5, bones[6][1]+5));
+	        g2.draw(new Line2D.Double(bones[6][0]+5, bones[6][1]+5, bones[7][0]+5, bones[7][1]+5));
+	        
+	        //Right Arm
+	        g2.draw(new Line2D.Double(bones[2][0]+5, bones[2][1]+5, bones[8][0]+5, bones[8][1]+5));
+	        g2.draw(new Line2D.Double(bones[8][0]+5, bones[8][1]+5, bones[9][0]+5, bones[9][1]+5));
+	        g2.draw(new Line2D.Double(bones[9][0]+5, bones[9][1]+5, bones[10][0]+5, bones[10][1]+5));
+	        g2.draw(new Line2D.Double(bones[10][0]+5, bones[10][1]+5, bones[11][0]+5, bones[11][1]+5));
+	        
+	        // Left Leg
+	        g2.draw(new Line2D.Double(bones[0][0]+5, bones[0][1]+5, bones[12][0]+5, bones[12][1]+5));
+	        g2.draw(new Line2D.Double(bones[12][0]+5, bones[12][1]+5, bones[13][0]+5, bones[13][1]+5));
+	        g2.draw(new Line2D.Double(bones[13][0]+5, bones[13][1]+5, bones[14][0]+5, bones[14][1]+5));
+	        g2.draw(new Line2D.Double(bones[14][0]+5, bones[14][1]+5, bones[15][0]+5, bones[15][1]+5));
+	        
+	        // Right Leg
+        	g2.draw(new Line2D.Double(bones[0][0]+5, bones[0][1]+5, bones[16][0]+5, bones[16][1]+5));
+	        g2.draw(new Line2D.Double(bones[16][0]+5, bones[16][1]+5, bones[17][0]+5, bones[17][1]+5));
+	        g2.draw(new Line2D.Double(bones[17][0]+5, bones[17][1]+5, bones[18][0]+5, bones[18][1]+5));
+	        g2.draw(new Line2D.Double(bones[18][0]+5, bones[18][1]+5, bones[19][0]+5, bones[19][1]+5));
 	    }  
 	}
 	
@@ -265,6 +274,8 @@ public class RobotHandler
 	    		break;
     		}
     	}
+    	
+    	System.out.println("Goodbye!");
     	
     	scanner.close();
 	}
@@ -357,9 +368,11 @@ public class RobotHandler
 				int rightShoulderIndex = SkeletonJoint.SHOULDER_RIGHT.ordinal();
 				int rightElbowIndex = SkeletonJoint.ELBOW_RIGHT.ordinal();
 				
-				test.testPanel.plotPoint(joints[rightShoulderIndex].x, joints[rightShoulderIndex].y, rightShoulderIndex);
-				test.testPanel.plotPoint(joints[rightElbowIndex].x, joints[rightElbowIndex].y, rightElbowIndex);
-				
+				for (int i = 0; i < 20; i++)
+				{
+					test.testPanel.plotPoint(joints[i].x, joints[i].y, i);
+				}
+
 				double rightShoulderRoll = Math.tan((double)Math.abs(joints[rightShoulderIndex].x-joints[rightElbowIndex].x)/
 						(double)Math.abs(joints[rightShoulderIndex].y-joints[rightElbowIndex].y));
 				
