@@ -10,10 +10,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
@@ -48,7 +44,7 @@ public class RobotHandler
 	private final int scaleFactor = 1;
 	private final String title = "Kinect Video Frame";
 	private final int ulx = 10; // Upper left x of window
-	private final int uly = 20; // Upper left y of window
+	private final int uly = 600; // Upper left y of window
 	private final int width = 640;  // Width of window in pixels
 	private final int height = 480; // Height of window in pixels
 	
@@ -93,11 +89,11 @@ public class RobotHandler
 	
 	Kinect kinect;
 	
-	public class SwingPaintDemo1
+	public class KinectDebuggingFrame
 	{
-		public MyPanel testPanel = new MyPanel();
+		public KinectPanel kinectP = new KinectPanel();
 		
-	    SwingPaintDemo1()
+		KinectDebuggingFrame()
 	    {
 	        SwingUtilities.invokeLater(new Runnable()
 	        {
@@ -112,20 +108,20 @@ public class RobotHandler
 	    {
 	        JFrame f = new JFrame("Swing Paint Demo");
 	        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	        f.setSize(1280,800);
-	        f.add(testPanel);
+	        f.setSize(640,560);
+	        f.add(kinectP);
 	        f.pack();
 	        f.setVisible(true);
 	    }
 	}
 	
-	class MyPanel extends JPanel
+	class KinectPanel extends JPanel
 	{
 	    private int squareW = 10;
 	    private int squareH = 10;
 	    private int[][] bones = new int[20][2];
 	    
-	    public MyPanel()
+	    public KinectPanel()
 	    {
 	        setBorder(BorderFactory.createLineBorder(Color.black));
 	        
@@ -145,7 +141,7 @@ public class RobotHandler
 
 	    public Dimension getPreferredSize()
 	    {
-	        return new Dimension(1280,800);
+	        return new Dimension(640,560);
 	    }
 
 	    public void paintComponent(Graphics g)
@@ -350,8 +346,8 @@ public class RobotHandler
 	{
 		kinect = new Kinect(dllPath, title, ulx, uly, width, height, 
 			      NativeHandler.WS_BORDER | NativeHandler.WS_VISIBLE);
-		SwingPaintDemo1 test = new SwingPaintDemo1();
-		new Console(new Position(200, 10), 
+		KinectDebuggingFrame kinectFrame = new KinectDebuggingFrame();
+		new Console(new Position(700, 10), 
 			      new Size(500, 500), new Font("Courier", Font.PLAIN, 12));
 		
 		kinect.setWindowScaleFactor(scaleFactor);
@@ -370,7 +366,7 @@ public class RobotHandler
 				
 				for (int i = 0; i < 20; i++)
 				{
-					test.testPanel.plotPoint(joints[i].x, joints[i].y, i);
+					kinectFrame.kinectP.plotPoint(joints[i].x, joints[i].y, i);
 				}
 
 				double rightShoulderRoll = Math.tan((double)Math.abs(joints[rightShoulderIndex].x-joints[rightElbowIndex].x)/
