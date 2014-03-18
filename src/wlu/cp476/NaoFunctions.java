@@ -76,7 +76,7 @@ public class NaoFunctions
 		{
 			Variant pitchName  = new Variant(new String[] {"RShoulderPitch" , "RShoulderRoll"});
 			Variant pitchAngle = new Variant(new float[] { rightShoulderPitch, rightShoulderRoll });
-			Variant pitchTime  = new Variant(new float[] {	0.0f, 2.0f });
+			Variant pitchTime  = new Variant(new float[] {	1.0f, 1.0f });
 	
 			motion.setStiffnesses(new Variant(new String[] {"RShoulderPitch"}), new Variant(new float[] {1.0f}));
 			motion.setStiffnesses(new Variant(new String[] {"RShoulderRoll"}), new Variant(new float[] {1.0f}));

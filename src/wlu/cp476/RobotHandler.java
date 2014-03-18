@@ -31,7 +31,7 @@ public class RobotHandler
 {
 	public static void main(String[] args)
 	{
-		RobotHandler NaoH = new RobotHandler(true);
+		RobotHandler NaoH = new RobotHandler(false);
 		NaoH.Start();
 	}
 
@@ -348,15 +348,17 @@ public class RobotHandler
 			      NativeHandler.WS_BORDER | NativeHandler.WS_VISIBLE);
 		KinectDebuggingFrame kinectFrame = new KinectDebuggingFrame();
 		new Console(new Position(700, 10), 
-			      new Size(500, 500), new Font("Courier", Font.PLAIN, 12));
+			      new Size(700, 500), new Font("Courier", Font.PLAIN, 12));
 		
 		kinect.setWindowScaleFactor(scaleFactor);
 		Point3D[] joints = new Point3D[20];
 		for (int i = 0; i < 20; i++)
 			joints[i] = new Point3D();
 		
+		int count = 0;
+		int timer = 0;
 
-		while (true)
+		while (count < 5)
 		{
 			int skeletonId = kinect.getJoints(joints, 20);
 			if (skeletonId > -1)
@@ -368,27 +370,42 @@ public class RobotHandler
 				{
 					kinectFrame.kinectP.plotPoint(joints[i].x, joints[i].y, i);
 				}
-
-				double rightShoulderRoll = Math.tan((double)Math.abs(joints[rightShoulderIndex].x-joints[rightElbowIndex].x)/
-						(double)Math.abs(joints[rightShoulderIndex].y-joints[rightElbowIndex].y));
 				
-				double angle = rightShoulderRoll*180/Math.PI;
+				float rightShoulderRoll = getAngle(joints[rightShoulderIndex].x, joints[rightShoulderIndex].y,
+						joints[rightElbowIndex].x, joints[rightElbowIndex].y);
+						
+				float rollAngle = (float) (rightShoulderRoll*Math.PI/180);
 				
-				if (angle < 76 && angle > 0)
+				if (timer%200 == 0)
 				{
-					//myNao.rightShoulderMovement(naoMotion, 0.0f, (float)rightShoulderRoll);
-					System.out.println("Setting Angle to" + (float)rightShoulderRoll);
-				}
-    
-				System.out.println("Right Shoulder: (" + joints[rightShoulderIndex].x + ", " 
-						+ joints[rightShoulderIndex].y + ", "  + joints[rightShoulderIndex].z + ")");
+					count++;
+					//myNao.rightShoulderMovement(naoMotion, 1.8f, -rollAngle);
+					
+					//myNao.Say(naoSpeech, "" + (int)rightShoulderRoll);
+					
+					System.out.print("Setting Angle to: " + (float)rightShoulderRoll + " (" + rollAngle + " radians)");
+	    
+					System.out.print(" Right Shoulder: (" + joints[rightShoulderIndex].x + ", " 
+							+ joints[rightShoulderIndex].y + ", "  + joints[rightShoulderIndex].z + ")");
 
-				System.out.println("Right Elbow: (" + joints[rightElbowIndex].x + ", " 
-						+ joints[rightElbowIndex].y + ", "  + joints[rightElbowIndex].z + ")");
+					System.out.println(" Right Elbow: (" + joints[rightElbowIndex].x + ", " 
+							+ joints[rightElbowIndex].y + ", "  + joints[rightElbowIndex].z + ")");
+				}
+				
+				timer++;
 			}
 			else
 				System.out.println("Invalid skeleton");
 		}
+	}
+	public float getAngle(int x1, int y1, int x2, int y2)
+	{
+	    float angle = (float) Math.toDegrees(Math.atan2(Math.abs(x1 - x2),Math.abs(y1 - y2)));
+	    
+	    if (angle < 0)
+	    	angle += 360;
+	    
+	    return angle;
 	}
 	public void DBConnect(int RoomNumber)
 	{
