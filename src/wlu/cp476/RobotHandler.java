@@ -31,7 +31,22 @@ public class RobotHandler
 {
 	public static void main(String[] args)
 	{
-		RobotHandler NaoH = new RobotHandler(false);
+		boolean debugMode = true;
+		
+		Scanner scan = new Scanner(System.in);
+		String input = "";
+				
+		System.out.println("Debug mode?");
+		System.out.println("1 - Yes");
+		System.out.println("2 - No");
+		
+		input = scan.nextLine();
+		if (input.equals("1"))
+			debugMode = true;
+		else
+			debugMode = false;
+		
+		RobotHandler NaoH = new RobotHandler(debugMode, scan);
 		NaoH.Start();
 	}
 
@@ -202,6 +217,7 @@ public class RobotHandler
 	 * DEFAULT ROBOT MODULES
 	 */
 	
+	Scanner myScanner;
 	ALMotionProxy naoMotion;
 	ALTextToSpeechProxy naoSpeech;
 	ALMemoryProxy naoMemory;
@@ -210,17 +226,18 @@ public class RobotHandler
 	// References to functions. Maybe move these to RobotHandler
 	NaoFunctions myNao = new NaoFunctions();
 	
-	RobotHandler(boolean debugMode)
+	RobotHandler(boolean debugMode, Scanner scan)
 	{
-		Initialize(debugMode);
+		Initialize(debugMode, scan);
 	}
 	
 	static {System.loadLibrary("jnaoqi");}
 	
-	private void Initialize(boolean debug)
+	private void Initialize(boolean debug, Scanner scan)
 	{
 		m_uiSpeechStep = 0;
 		m_uiState = StateCode.IDLE;
+		myScanner = scan;
 		
 		if (debug)
 			return;
@@ -239,7 +256,6 @@ public class RobotHandler
 	{
 		System.out.println("Welcome to NAO's Simulation!");
 		
-		Scanner scanner = new Scanner(System.in);
     	String inputLine = "";
     	
     	while (!inputLine.equals("7"))
@@ -255,11 +271,11 @@ public class RobotHandler
     		System.out.println("6. Initialize Kinect");
     		System.out.println("7. Quit");
     		System.out.println();
-    		inputLine = scanner.nextLine();
+    		inputLine = myScanner.nextLine();
     		
     		switch (inputLine)
     		{
-	    		case "1":	startGameMaze(scanner);	break;
+	    		case "1":	startGameMaze(myScanner);	break;
 	    		case "2":	printCredits();		break;
 	    		case "3":	initializeOculus();	break;
 	    		case "4":	overrideSpeech();	break;
@@ -273,7 +289,7 @@ public class RobotHandler
     	
     	System.out.println("Goodbye!");
     	
-    	scanner.close();
+    	myScanner.close();
 	}
 	
 	// Getters
