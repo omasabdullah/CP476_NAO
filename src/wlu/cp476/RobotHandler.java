@@ -50,7 +50,9 @@ public class RobotHandler
 		NaoH.Start();
 	}
 
-	static final String NAO_IP = "169.254.172.97";
+	//static final String NAO_IP = "169.254.172.97";
+	static final String NAO_IP = "10.49.45.189";
+	//static final String NAO_IP = "nao.local";
 	static final int NAO_PORT = 9559;
 	static final int RESULT_OK = 0;
 	static final int RESULT_FAILED = 1;
@@ -102,6 +104,7 @@ public class RobotHandler
 	JPanel videoRightPanel = new JPanel();
 	JLabel videoLabel = new JLabel();
 	
+	// Microsoft Kinect
 	Kinect kinect;
 	
 	public class KinectDebuggingFrame
@@ -371,10 +374,9 @@ public class RobotHandler
 		for (int i = 0; i < 20; i++)
 			joints[i] = new Point3D();
 		
-		int count = 0;
 		int timer = 0;
 
-		while (count < 5)
+		while (true)
 		{
 			int skeletonId = kinect.getJoints(joints, 20);
 			if (skeletonId > -1)
@@ -394,7 +396,6 @@ public class RobotHandler
 				
 				if (timer%200 == 0)
 				{
-					count++;
 					//myNao.rightShoulderMovement(naoMotion, 1.8f, -rollAngle);
 					
 					//myNao.Say(naoSpeech, "" + (int)rightShoulderRoll);

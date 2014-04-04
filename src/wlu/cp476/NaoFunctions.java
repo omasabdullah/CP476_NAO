@@ -1,6 +1,5 @@
 package wlu.cp476;
 
-import java.awt.image.BufferedImage;
 import java.util.Scanner;
 
 import com.aldebaran.proxy.*;
@@ -138,6 +137,7 @@ public class NaoFunctions
 	    	
 	    	tts.say("Hello");
 	    	tts.setVolume(1.0f);
+	    	System.out.println(tts.getVoice());
 	    	System.out.println("Input speech: ");
 	    	//Append each line to a vector, press enter (carriage return) once all lines entered
 	    	while (!(inputLine = scanner.nextLine()).equals(""))
